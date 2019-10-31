@@ -1,2 +1,2 @@
-# ThAmCo-Purchases
+# ThAmCo-CustomerPurchases
 dscurrey
