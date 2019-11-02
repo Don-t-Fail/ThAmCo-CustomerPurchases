@@ -3,16 +3,14 @@ using CustomerPurchases.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CustomerPurchases.Migrations
 {
-    [DbContext(typeof(PurchaseContext))]
-    [Migration("20191101231341_Initial")]
-    partial class Initial
+    [DbContext(typeof(PurchaseDbContext))]
+    partial class PurchaseContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
