@@ -6,10 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20191101230134_Initial.cs" />
-    <Compile Remove="Migrations\20191101230134_Initial.Designer.cs" />
-    <Compile Remove="Migrations\20191101230503_Initial.cs" />
-    <Compile Remove="Migrations\20191101230503_Initial.Designer.cs" />
+    <Compile Remove="Data\Migrations\20191101230134_Initial.cs" />
+    <Compile Remove="Data\Migrations\20191101230134_Initial.Designer.cs" />
+    <Compile Remove="Data\Migrations\20191101230503_Initial.cs" />
+    <Compile Remove="Data\Migrations\20191101230503_Initial.Designer.cs" />
   </ItemGroup>
 
 
@@ -22,6 +22,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
   </ItemGroup>
 
 </Project>
