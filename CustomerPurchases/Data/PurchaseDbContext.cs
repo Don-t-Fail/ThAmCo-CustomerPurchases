@@ -28,5 +28,14 @@ namespace CustomerPurchases.Data
             base.OnConfiguring(optionsBuilder);
         }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            if (HostEnv != null && HostEnv.IsDevelopment())
+            {
+                //SeedData
+            }
+        }
+
     }
 }
