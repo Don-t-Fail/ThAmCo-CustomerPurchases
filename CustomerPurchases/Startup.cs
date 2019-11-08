@@ -36,11 +36,13 @@ namespace CustomerPurchases
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddDbContext<PurchaseDbContext>(options =>
-            {
-                var cs = Configuration.GetConnectionString("PurchasesConnection");
-                options.UseSqlServer(cs);
-            });
+            services.AddDbContext<PurchaseDbContext>(options => options.UseSqlServer(
+                Configuration.GetConnectionString("PurchasesConnection"), optionsBuilder =>
+                {
+                    //Enable retry pattern on EF SQL
+                    optionsBuilder.EnableRetryOnFailure(3, TimeSpan.FromSeconds(10), null);
+                }
+            ));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
