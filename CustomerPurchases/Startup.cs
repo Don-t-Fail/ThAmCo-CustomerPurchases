@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
 
 namespace CustomerPurchases
 {
@@ -43,6 +44,14 @@ namespace CustomerPurchases
                     optionsBuilder.EnableRetryOnFailure(3, TimeSpan.FromSeconds(10), null);
                 }
             ));
+
+            //Polly Circuit Breaker HttpClient Config
+            services.AddHttpClient("RetryAndBreak")
+                .AddTransientHttpErrorPolicy(p => p
+                    .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))))
+                .AddTransientHttpErrorPolicy(p =>
+                    p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
