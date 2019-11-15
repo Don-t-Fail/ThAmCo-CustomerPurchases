@@ -10,6 +10,7 @@ namespace CustomerPurchases.Data
     {
         Task<IEnumerable<Purchase>> GetAll();
         Task<Purchase> GetPurchase(int id);
+        Task<IEnumerable<Purchase>> GetPurchaseByAccount(int accId);
         void InsertPurchase(Purchase purchase);
         void DeletePurchase(int id);
         void UpdatePurchase(Purchase purchase);

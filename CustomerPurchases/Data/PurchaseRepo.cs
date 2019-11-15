@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CustomerPurchases.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CustomerPurchases.Data
 {
@@ -21,29 +22,34 @@ namespace CustomerPurchases.Data
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Purchase>> GetAll()
+        public async Task<IEnumerable<Purchase>> GetAll()
         {
-            throw new NotImplementedException();
+            return await _context.Purchase.ToListAsync();
         }
 
-        public Task<Purchase> GetPurchase(int id)
+        public async Task<Purchase> GetPurchase(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Purchase.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public void InsertPurchase(Purchase purchase)
+        public async Task<IEnumerable<Purchase>> GetPurchaseByAccount(int accId)
         {
-            throw new NotImplementedException();
+            return await _context.Purchase.Where(p => p.AccountId == accId).ToListAsync();
         }
 
-        public Task Save()
+        public async void InsertPurchase(Purchase purchase)
         {
-            throw new NotImplementedException();
+            await _context.Purchase.AddAsync(purchase);
+        }
+
+        public async Task Save()
+        {
+            await _context.SaveChangesAsync();
         }
 
         public void UpdatePurchase(Purchase purchase)
         {
-            throw new NotImplementedException();
+            _context.Entry(purchase).State = EntityState.Modified;
         }
     }
 }
