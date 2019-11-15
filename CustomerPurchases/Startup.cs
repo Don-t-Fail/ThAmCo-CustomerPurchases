@@ -52,6 +52,8 @@ namespace CustomerPurchases
                     .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))))
                 .AddTransientHttpErrorPolicy(p =>
                     p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+
+            services.AddScoped<IPurchaseRepo, PurchaseRepo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
