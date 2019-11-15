@@ -7,8 +7,15 @@ using CustomerPurchases.Models;
 namespace CustomerPurchases.Data
 {
     public class PurchaseRepo : IPurchaseRepo
-
     {
+
+        private readonly PurchaseDbContext _context;
+
+        public PurchaseRepo(PurchaseDbContext context)
+        {
+            _context = context;
+        }
+
         public void DeletePurchase(int id)
         {
             throw new NotImplementedException();
