@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CustomerPurchases.Data;
 using CustomerPurchases.Models;
+using Microsoft.Extensions.Logging;
 
 namespace CustomerPurchases.Controllers
 {
@@ -14,25 +15,20 @@ namespace CustomerPurchases.Controllers
     [ApiController]
     public class PurchasesController : ControllerBase
     {
-        private readonly PurchaseDbContext _context;
+        private readonly IPurchaseRepo _repository;
+        private readonly ILogger<PurchasesController> _logger;
 
-        public PurchasesController(PurchaseDbContext context)
+        public PurchasesController(IPurchaseRepo purchaseRepo, ILogger<PurchasesController> logger)
         {
-            _context = context;
-        }
-
-        // GET: api/Purchases
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Purchase>>> GetPurchase()
-        {
-            return await _context.Purchase.ToListAsync();
+            _repository = purchaseRepo;
+            _logger = logger;
         }
 
         // GET: api/Purchases/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Purchase>> GetPurchase(int id)
         {
-            var purchase = await _context.Purchase.FindAsync(id);
+            var purchase = await _repository.GetPurchase(id);
 
             if (purchase == null)
             {
@@ -46,38 +42,16 @@ namespace CustomerPurchases.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPurchase(int id, Purchase purchase)
         {
-            if (id != purchase.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(purchase).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PurchaseExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            // TODO - Update Purchase
+            return NotFound();
         }
 
         // POST: api/Purchases
         [HttpPost]
         public async Task<ActionResult<Purchase>> PostPurchase(Purchase purchase)
         {
-            _context.Purchase.Add(purchase);
-            await _context.SaveChangesAsync();
+            _repository.InsertPurchase(purchase);
+            await _repository.Save();
 
             return CreatedAtAction("GetPurchase", new { id = purchase.Id }, purchase);
         }
@@ -86,21 +60,36 @@ namespace CustomerPurchases.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Purchase>> DeletePurchase(int id)
         {
-            var purchase = await _context.Purchase.FindAsync(id);
+            // TODO - Soft Deletion
+            var purchase = await _repository.GetPurchase(id);
             if (purchase == null)
             {
                 return NotFound();
             }
 
-            _context.Purchase.Remove(purchase);
-            await _context.SaveChangesAsync();
+            _repository.DeletePurchase(id);
+            await _repository.Save();
 
             return purchase;
         }
 
+        // GET: api/Purchases?AccId=5
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Purchase>>> GetPurchaseAccount(int accId)
+        {
+            var purchases = await _repository.GetPurchaseByAccount(accId);
+            if (purchases.Any())
+            {
+                return Ok(purchases);
+            }
+
+            return NotFound();
+        }
+
+        // TODO - Make Async?
         private bool PurchaseExists(int id)
         {
-            return _context.Purchase.Any(e => e.Id == id);
+            return _repository.GetAll().Result.Any(p => p.Id == id);
         }
     }
 }
