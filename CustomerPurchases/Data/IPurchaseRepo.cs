@@ -6,7 +6,7 @@ using CustomerPurchases.Models;
 
 namespace CustomerPurchases.Data
 {
-    interface IPurchaseRepo
+    public interface IPurchaseRepo
     {
         Task<IEnumerable<Purchase>> GetAll();
         Task<Purchase> GetPurchase(int id);
