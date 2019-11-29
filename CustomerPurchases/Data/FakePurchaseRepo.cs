@@ -28,7 +28,7 @@ namespace CustomerPurchases.Data
 
         public Task<Purchase> GetPurchase(int id)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(_purchases.FirstOrDefault(p => p.Id == id));
         }
 
         public Task<IEnumerable<Purchase>> GetPurchaseByAccount(int accId)
