@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,13 @@ namespace CustomerPurchases.Controllers
     {
         private readonly IPurchaseRepo _repository;
         private readonly ILogger<PurchasesController> _logger;
+        private readonly IHttpClientFactory _clientFactory;
 
-        public PurchasesController(IPurchaseRepo purchaseRepo, ILogger<PurchasesController> logger)
+        public PurchasesController(IPurchaseRepo purchaseRepo, ILogger<PurchasesController> logger, IHttpClientFactory clientFactory)
         {
             _repository = purchaseRepo;
             _logger = logger;
+            _clientFactory = clientFactory;
         }
 
         // GET: api/Purchases/5
@@ -52,6 +55,12 @@ namespace CustomerPurchases.Controllers
         {
             _repository.InsertPurchase(purchase);
             await _repository.Save();
+
+            _logger.LogInformation("Communicating with Reviews API");
+            var client = _clientFactory.CreateClient("RetryAndBreak");
+            client.BaseAddress = new System.Uri("https://localhost:44367/");
+
+            var resp = await client.PostAsJsonAsync("api/Purchases/", purchase);
 
             return CreatedAtAction("GetPurchase", new { id = purchase.Id }, purchase);
         }
