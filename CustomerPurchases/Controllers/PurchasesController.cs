@@ -108,15 +108,15 @@ namespace CustomerPurchases.Controllers
 
         // GET: api/Purchases?AccId=5
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Purchase>>> GetPurchaseAccount(int accId)
+        public async Task<IEnumerable<Purchase>> GetPurchaseAccount(int accId)
         {
             var purchases = await _repository.GetPurchaseByAccount(accId);
             if (purchases.Any())
             {
-                return Ok(purchases);
+                return purchases;
             }
 
-            return NotFound();
+            return null;
         }
         private async Task<bool> PurchaseExists(int id)
         {

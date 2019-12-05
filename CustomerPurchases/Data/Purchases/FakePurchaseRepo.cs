@@ -9,21 +9,22 @@ namespace CustomerPurchases.Data
     public class FakePurchaseRepo : IPurchaseRepo
     {
 
-        private IEnumerable<Purchase> _purchases;
+        private List<Purchase> _purchases;
 
-        public FakePurchaseRepo(IEnumerable<Purchase> purchases)
+        public FakePurchaseRepo(List<Purchase> purchases)
         {
             _purchases = purchases;
         }
 
         public void DeletePurchase(int id)
         {
-            throw new NotImplementedException();
+            var purchase = _purchases.Find(p => p.Id == id);
+            _purchases.Remove(purchase);
         }
 
-        public Task<IEnumerable<Purchase>> GetAll()
+        public async Task<List<Purchase>> GetAll()
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(_purchases.ToList());
         }
 
         public Task<Purchase> GetPurchase(int id)
@@ -31,19 +32,19 @@ namespace CustomerPurchases.Data
             return Task.FromResult(_purchases.FirstOrDefault(p => p.Id == id));
         }
 
-        public Task<IEnumerable<Purchase>> GetPurchaseByAccount(int accId)
+        public async Task<List<Purchase>> GetPurchaseByAccount(int accId)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(_purchases.Where(p => p.AccountId == accId).ToList());
         }
 
         public void InsertPurchase(Purchase purchase)
         {
-            throw new NotImplementedException();
+            _purchases.Add(purchase);
         }
 
         public Task Save()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public void UpdatePurchase(Purchase purchase)
