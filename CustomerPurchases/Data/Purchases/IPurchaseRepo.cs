@@ -6,11 +6,11 @@ using CustomerPurchases.Models;
 
 namespace CustomerPurchases.Data
 {
-    interface IPurchaseRepo
+    public interface IPurchaseRepo
     {
-        Task<IEnumerable<Purchase>> GetAll();
+        Task<List<Purchase>> GetAll();
         Task<Purchase> GetPurchase(int id);
-        Task<IEnumerable<Purchase>> GetPurchaseByAccount(int accId);
+        Task<List<Purchase>> GetPurchaseByAccount(int accId);
         void InsertPurchase(Purchase purchase);
         void DeletePurchase(int id);
         void UpdatePurchase(Purchase purchase);

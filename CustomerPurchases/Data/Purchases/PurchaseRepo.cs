@@ -19,10 +19,11 @@ namespace CustomerPurchases.Data
 
         public void DeletePurchase(int id)
         {
-            throw new NotImplementedException();
+            var purchase = _context.Purchase.FirstOrDefault(p => p.Id == id);
+            _context.Purchase.Remove(purchase);
         }
 
-        public async Task<IEnumerable<Purchase>> GetAll()
+        public async Task<List<Purchase>> GetAll()
         {
             return await _context.Purchase.ToListAsync();
         }
@@ -32,7 +33,7 @@ namespace CustomerPurchases.Data
             return await _context.Purchase.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<IEnumerable<Purchase>> GetPurchaseByAccount(int accId)
+        public async Task<List<Purchase>> GetPurchaseByAccount(int accId)
         {
             return await _context.Purchase.Where(p => p.AccountId == accId).ToListAsync();
         }
