@@ -10,6 +10,7 @@ using CustomerPurchases.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Net.Http;
+using Microsoft.CodeAnalysis.CSharp;
 using Moq;
 
 namespace CustomerPurchases.Controllers.Tests
@@ -27,7 +28,8 @@ namespace CustomerPurchases.Controllers.Tests
                 new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
             };
             var repo = new FakePurchaseRepo(purchases);
-            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), null);
+            var factory = new Mock<IHttpClientFactory>();
+            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object);
             var purchaseId = 1;
 
             // Act
@@ -48,7 +50,6 @@ namespace CustomerPurchases.Controllers.Tests
             };
             var repo = new FakePurchaseRepo(purchases);
             var factory = new Mock<IHttpClientFactory>();
-            var client = new HttpClient();
             var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object);
             var purchaseId = 3;
 
@@ -59,58 +60,124 @@ namespace CustomerPurchases.Controllers.Tests
             Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
         }
 
+        // TODO - Mocks with working factories & clients 
+        //[TestMethod]
+        //public void PutPurchaseTest()
+        //{
+        //    Assert.Fail();
+        //}
+
+        //[TestMethod]
+        //public void PutPurchaseTest_NotExists()
+        //{
+        //    Assert.Fail();
+        //}
+
+        //[TestMethod]
+        //public void PostPurchaseTest()
+        //{
+        //    Assert.Fail();
+        //}
+
+        //[TestMethod]
+        //public void PostPurchaseTest_Exists()
+        //{
+        //    Assert.Fail();
+        //}
+
+        //[TestMethod]
+        //public void PostPurchaseTest_InvalidPurchase()
+        //{
+        //    Assert.Fail();
+        //}
+
         [TestMethod]
-        public void PutPurchaseTest()
+        public async Task DeletePurchaseTest()
         {
-            Assert.Fail();
+            // Arrange
+            var purchases = new List<Purchase>
+            {
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
+            };
+            var repo = new FakePurchaseRepo(purchases);
+            var factory = new Mock<IHttpClientFactory>();
+            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object);
+            var purchaseId = 1;
+
+            // Act
+            var result = await controller.DeletePurchase(purchaseId);
+
+            // Assert
+            Assert.IsNull(purchases.Find(p => p.Id == purchaseId));
         }
 
         [TestMethod]
-        public void PutPurchaseTest_NotExists()
+        public async Task DeletePurchaseTest_NotExists()
         {
-            Assert.Fail();
+            // Arrange
+            var purchases = new List<Purchase>
+            {
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
+            };
+            var repo = new FakePurchaseRepo(purchases);
+            var factory = new Mock<IHttpClientFactory>();
+            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object);
+            var purchaseId = 3;
+
+            // Act
+            var result = await controller.DeletePurchase(purchaseId);
+
+            // Assert
+            Assert.IsNull(result.Value);
         }
 
         [TestMethod]
-        public void PostPurchaseTest()
+        public async Task GetPurchaseAccountTest()
         {
-            Assert.Fail();
+            // Arrange
+            var purchases = new List<Purchase>
+            {
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7},
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
+                new Purchase { Id = 1, AccountId = 2, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2}
+            };
+            var repo = new FakePurchaseRepo(purchases);
+            var factory = new Mock<IHttpClientFactory>();
+            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object);
+            var accId = 1;
+
+            // Act
+            var expected = purchases.Where(p => p.AccountId == accId);
+            var result = await controller.GetPurchaseAccount(accId);
+
+            // Assert
+            Assert.IsTrue(result.SequenceEqual(expected));
         }
 
         [TestMethod]
-        public void PostPurchaseTest_Exists()
+        public async Task GetPurchaseAccountTest_NotExists()
         {
-            Assert.Fail();
-        }
+            // Arrange
+            var purchases = new List<Purchase>
+            {
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7},
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
+                new Purchase { Id = 1, AccountId = 2, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2}
+            };
+            var repo = new FakePurchaseRepo(purchases);
+            var factory = new Mock<IHttpClientFactory>();
+            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object);
+            var accId = 42;
 
-        [TestMethod]
-        public void PostPurchaseTest_InvalidPurchase()
-        {
-            Assert.Fail();
-        }
+            // Act
+            var result = await controller.GetPurchaseAccount(accId);
 
-        [TestMethod]
-        public void DeletePurchaseTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod]
-        public void DeletePurchaseTest_NotExists()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod]
-        public void GetPurchaseAccountTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod]
-        public void GetPurchaseAccountTest_NotExists()
-        {
-            Assert.Fail();
+            // Assert
+            Assert.IsNull(result);
         }
     }
 }
