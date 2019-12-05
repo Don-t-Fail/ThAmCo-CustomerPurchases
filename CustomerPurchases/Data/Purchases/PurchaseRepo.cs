@@ -19,7 +19,8 @@ namespace CustomerPurchases.Data
 
         public void DeletePurchase(int id)
         {
-            throw new NotImplementedException();
+            var purchase = _context.Purchase.FirstOrDefault(p => p.Id == id);
+            _context.Purchase.Remove(purchase);
         }
 
         public async Task<IEnumerable<Purchase>> GetAll()

@@ -45,8 +45,32 @@ namespace CustomerPurchases.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPurchase(int id, Purchase purchase)
         {
-            // TODO - Update Purchase
-            return NotFound();
+            if (id != purchase.Id)
+            {
+                return BadRequest();
+            }
+
+            _repository.UpdatePurchase(purchase);
+
+            // TODO - Implement Pushing updated purchases to Reviews Service
+
+            try
+            {
+                await _repository.Save();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (! await PurchaseExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
         // POST: api/Purchases
@@ -94,11 +118,9 @@ namespace CustomerPurchases.Controllers
 
             return NotFound();
         }
-
-        // TODO - Make Async?
-        private bool PurchaseExists(int id)
+        private async Task<bool> PurchaseExists(int id)
         {
-            return _repository.GetAll().Result.Any(p => p.Id == id);
+            return await _repository.GetPurchase(id) != null;
         }
     }
 }
