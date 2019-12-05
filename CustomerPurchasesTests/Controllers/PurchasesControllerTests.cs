@@ -9,6 +9,8 @@ using CustomerPurchases.Data;
 using CustomerPurchases.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Net.Http;
+using Moq;
 
 namespace CustomerPurchases.Controllers.Tests
 {
@@ -25,7 +27,7 @@ namespace CustomerPurchases.Controllers.Tests
                 new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
             };
             var repo = new FakePurchaseRepo(purchases);
-            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>());
+            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), null);
             var purchaseId = 1;
 
             // Act
@@ -45,7 +47,9 @@ namespace CustomerPurchases.Controllers.Tests
                 new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
             };
             var repo = new FakePurchaseRepo(purchases);
-            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>());
+            var factory = new Mock<IHttpClientFactory>();
+            var client = new HttpClient();
+            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object);
             var purchaseId = 3;
 
             // Act
