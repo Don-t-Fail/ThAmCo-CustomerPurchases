@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CustomerPurchases.Data;
 using CustomerPurchases.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace CustomerPurchases.Controllers
@@ -19,12 +20,14 @@ namespace CustomerPurchases.Controllers
         private readonly IPurchaseRepo _repository;
         private readonly ILogger<PurchasesController> _logger;
         private readonly IHttpClientFactory _clientFactory;
+        private readonly IConfiguration _config;
 
-        public PurchasesController(IPurchaseRepo purchaseRepo, ILogger<PurchasesController> logger, IHttpClientFactory clientFactory)
+        public PurchasesController(IPurchaseRepo purchaseRepo, ILogger<PurchasesController> logger, IHttpClientFactory clientFactory, IConfiguration config)
         {
             _repository = purchaseRepo;
             _logger = logger;
             _clientFactory = clientFactory;
+            _config = config;
         }
 
         // GET: api/Purchases/5
@@ -82,7 +85,7 @@ namespace CustomerPurchases.Controllers
 
             _logger.LogInformation("Communicating with Reviews API");
             var client = _clientFactory.CreateClient("RetryAndBreak");
-            client.BaseAddress = new System.Uri("https://localhost:44367/");
+            client.BaseAddress = new System.Uri(_config["ReviewsURL"]);
 
             var resp = await client.PostAsJsonAsync("api/Purchases/", purchase);
 
