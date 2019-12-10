@@ -29,7 +29,7 @@ namespace CustomerPurchases.Controllers.Tests
             };
             var repo = new FakePurchaseRepo(purchases);
             var factory = new Mock<IHttpClientFactory>();
-            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object);
+            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object, null);
             var purchaseId = 1;
 
             // Act
@@ -50,7 +50,7 @@ namespace CustomerPurchases.Controllers.Tests
             };
             var repo = new FakePurchaseRepo(purchases);
             var factory = new Mock<IHttpClientFactory>();
-            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object);
+            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object, null);
             var purchaseId = 3;
 
             // Act
@@ -102,7 +102,7 @@ namespace CustomerPurchases.Controllers.Tests
             };
             var repo = new FakePurchaseRepo(purchases);
             var factory = new Mock<IHttpClientFactory>();
-            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object);
+            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object, null);
             var purchaseId = 1;
 
             // Act
@@ -123,7 +123,7 @@ namespace CustomerPurchases.Controllers.Tests
             };
             var repo = new FakePurchaseRepo(purchases);
             var factory = new Mock<IHttpClientFactory>();
-            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object);
+            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object, null);
             var purchaseId = 3;
 
             // Act
@@ -146,7 +146,7 @@ namespace CustomerPurchases.Controllers.Tests
             };
             var repo = new FakePurchaseRepo(purchases);
             var factory = new Mock<IHttpClientFactory>();
-            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object);
+            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object, null);
             var accId = 1;
 
             // Act
@@ -170,7 +170,7 @@ namespace CustomerPurchases.Controllers.Tests
             };
             var repo = new FakePurchaseRepo(purchases);
             var factory = new Mock<IHttpClientFactory>();
-            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object);
+            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object, null);
             var accId = 42;
 
             // Act
