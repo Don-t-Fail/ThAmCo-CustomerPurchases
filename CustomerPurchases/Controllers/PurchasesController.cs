@@ -88,8 +88,12 @@ namespace CustomerPurchases.Controllers
             client.BaseAddress = new System.Uri(_config["ReviewsURL"]);
 
             var resp = await client.PostAsJsonAsync("api/Purchases/", purchase);
+            if (resp.IsSuccessStatusCode)
+            {
+                return CreatedAtAction("GetPurchase", new { id = purchase.Id }, purchase);
+            }
 
-            return CreatedAtAction("GetPurchase", new { id = purchase.Id }, purchase);
+            return BadRequest();
         }
 
         // DELETE: api/Purchases/5
