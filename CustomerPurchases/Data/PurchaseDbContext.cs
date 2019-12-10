@@ -65,6 +65,5 @@ namespace CustomerPurchases.Data
                 );
             }
         }
-
     }
 }
