@@ -37,13 +37,13 @@ steps:
     command: 'build'
     repository: 'dcurrey/thamco-purchases'
     Dockerfile: 'Purchases/Dockerfile'
-    tags: 'purchaseslatest'
+    tags: 'latest'
 - task: Docker@2
   displayName: 'Pushing to DockerHub'
   inputs:
     containerRegistry: 'DockerHub'
     repository: 'dcurrey/thamco-purchases'
-    tags: 'purchaseslatest'
+    tags: 'latest'
     command: 'push'
 
 - task: DotNetCoreCLI@2
