@@ -6,3 +6,7 @@ exclude:
 - /CustomerPurchases/wwwroot/.*
 - /CustomerPurchases/bin/.*
 - /CustomerPurchases/obj/.*
+- /CustomerPurchases/Data/Migrations/.*
+- /CustomerPurchases/Models/.*
+- /CustomerPurchases/Program.cs
+- /CustomerPurchases/Startup.cs
