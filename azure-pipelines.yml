@@ -36,7 +36,7 @@ steps:
   inputs:
     command: 'build'
     repository: 'dcurrey/thamco-purchases'
-    Dockerfile: 'Purchases/Dockerfile'
+    Dockerfile: 'CustomerPurchases/Dockerfile'
     tags: 'latest'
 - task: Docker@2
   displayName: 'Pushing to DockerHub'
