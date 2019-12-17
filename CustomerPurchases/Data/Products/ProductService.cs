@@ -29,7 +29,8 @@ namespace CustomerPurchases.Data.Products
         {
             var products = await _context.Product.Select(p => new ProductDto
             {
-
+                Id = p.Id,
+                Name = p.Name
             }).ToListAsync();
             if (products.Count != 0)
             {
