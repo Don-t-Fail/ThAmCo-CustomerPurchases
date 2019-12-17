@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using System;
+using CustomerPurchases.Data.Products;
 
 namespace CustomerPurchases
 {
@@ -49,6 +50,7 @@ namespace CustomerPurchases
                     p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
             services.AddScoped<IPurchaseRepo, PurchaseRepo>();
+            services.AddScoped<IProductService, ProductService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
