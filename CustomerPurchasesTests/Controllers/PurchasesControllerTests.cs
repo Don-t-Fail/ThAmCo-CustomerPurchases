@@ -22,6 +22,20 @@ namespace CustomerPurchases.Controllers.Tests
     [TestClass]
     public class PurchasesControllerTests
     {
+
+        private Mock<HttpMessageHandler> CreateHttpMock(HttpResponseMessage expected)
+        {
+            var mock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            mock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(expected)
+                .Verifiable();
+            return mock;
+        }
+
         [TestMethod]
         public async Task GetPurchaseTest()
         {
