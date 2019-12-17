@@ -6,24 +6,27 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CustomerPurchases.Data;
+using CustomerPurchases.Data.Products;
 using CustomerPurchases.Models;
 
 namespace CustomerPurchases.Controllers
 {
     public class PurchasesController : Controller
     {
-        private readonly PurchaseDbContext _context;
+        private readonly IPurchaseRepo _repository;
+        private readonly IProductService _productServ;
 
-        public PurchasesController(PurchaseDbContext context)
+        public PurchasesController(IPurchaseRepo repository, IProductService prodServ)
         {
-            _context = context;
+            _repository = repository;
+            _productServ = prodServ;
         }
 
         // GET: Purchases
         public async Task<IActionResult> Index()
         {
-            var purchaseDbContext = _context.Purchase.Include(p => p.Product);
-            return View(await purchaseDbContext.ToListAsync());
+            var repo = await _repository.GetAll();
+            return View(repo);
         }
 
         // GET: Purchases/Details/5
@@ -34,9 +37,7 @@ namespace CustomerPurchases.Controllers
                 return NotFound();
             }
 
-            var purchase = await _context.Purchase
-                .Include(p => p.Product)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var purchase = await _repository.GetPurchase(id.Value);
             if (purchase == null)
             {
                 return NotFound();
@@ -46,9 +47,9 @@ namespace CustomerPurchases.Controllers
         }
 
         // GET: Purchases/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["ProductId"] = new SelectList(_context.Product, "Id", "Id");
+            ViewData["ProductId"] = new SelectList(await _productServ.GetAll(), "Id", "Id");
             return View();
         }
 
@@ -61,11 +62,11 @@ namespace CustomerPurchases.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(purchase);
-                await _context.SaveChangesAsync();
+                _repository.InsertPurchase(purchase);
+                await _repository.Save();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductId"] = new SelectList(_context.Product, "Id", "Id", purchase.ProductId);
+            ViewData["ProductId"] = new SelectList(await _productServ.GetAll(), "Id", "Id", purchase.ProductId);
             return View(purchase);
         }
 
@@ -77,12 +78,12 @@ namespace CustomerPurchases.Controllers
                 return NotFound();
             }
 
-            var purchase = await _context.Purchase.FindAsync(id);
+            var purchase = await _repository.GetPurchase(id.Value);
             if (purchase == null)
             {
                 return NotFound();
             }
-            ViewData["ProductId"] = new SelectList(_context.Product, "Id", "Id", purchase.ProductId);
+            ViewData["ProductId"] = new SelectList(await _productServ.GetAll(), "Id", "Id", purchase.ProductId);
             return View(purchase);
         }
 
@@ -102,12 +103,12 @@ namespace CustomerPurchases.Controllers
             {
                 try
                 {
-                    _context.Update(purchase);
-                    await _context.SaveChangesAsync();
+                    _repository.UpdatePurchase(purchase);
+                    await _repository.Save();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PurchaseExists(purchase.Id))
+                    if (! await PurchaseExists(purchase.Id))
                     {
                         return NotFound();
                     }
@@ -118,7 +119,7 @@ namespace CustomerPurchases.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductId"] = new SelectList(_context.Product, "Id", "Id", purchase.ProductId);
+            ViewData["ProductId"] = new SelectList(await _productServ.GetAll(), "Id", "Id", purchase.ProductId);
             return View(purchase);
         }
 
@@ -130,9 +131,7 @@ namespace CustomerPurchases.Controllers
                 return NotFound();
             }
 
-            var purchase = await _context.Purchase
-                .Include(p => p.Product)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var purchase = await _repository.GetPurchase(id.Value);
             if (purchase == null)
             {
                 return NotFound();
@@ -146,15 +145,14 @@ namespace CustomerPurchases.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var purchase = await _context.Purchase.FindAsync(id);
-            _context.Purchase.Remove(purchase);
-            await _context.SaveChangesAsync();
+            _repository.DeletePurchase(id);
+            await _repository.Save();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PurchaseExists(int id)
+        private async Task<bool> PurchaseExists(int id)
         {
-            return _context.Purchase.Any(e => e.Id == id);
+            return await _repository.GetPurchase(id) != null;
         }
     }
 }
