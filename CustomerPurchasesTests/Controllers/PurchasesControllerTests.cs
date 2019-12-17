@@ -1,28 +1,22 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CustomerPurchases.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using CustomerPurchases.Data;
+﻿using CustomerPurchases.Data;
 using CustomerPurchases.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
-using System.Net.Http;
-using System.Threading;
-using Microsoft.AspNetCore.Mvc.Formatters.Internal;
-using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Moq.Protected;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CustomerPurchases.Controllers.Tests
 {
     [TestClass]
     public class PurchasesControllerTests
     {
-
         private Mock<HttpMessageHandler> CreateHttpMock(HttpResponseMessage expected)
         {
             var mock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
@@ -92,7 +86,12 @@ namespace CustomerPurchases.Controllers.Tests
             var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object, null);
             var newPurchase = new Purchase
             {
-                Id = 3, AccountId = 1, AddressId = 1, ProductId = 2, Qty = 5, OrderStatus = "In Progress"
+                Id = 3,
+                AccountId = 1,
+                AddressId = 1,
+                ProductId = 2,
+                Qty = 5,
+                OrderStatus = "In Progress"
             };
 
             // Act
@@ -126,7 +125,7 @@ namespace CustomerPurchases.Controllers.Tests
 
             // Act
             var result = await controller.PutPurchase(newPurchase.Id, newPurchase);
-            
+
             // Assert
             Assert.IsInstanceOfType(result, typeof(NoContentResult));
         }
