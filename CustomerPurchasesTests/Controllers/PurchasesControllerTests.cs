@@ -1,23 +1,35 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CustomerPurchases.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CustomerPurchases.Data;
+﻿using CustomerPurchases.Data;
 using CustomerPurchases.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
-using System.Net.Http;
-using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Moq.Protected;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CustomerPurchases.Controllers.Tests
 {
     [TestClass]
     public class PurchasesControllerTests
     {
+        private Mock<HttpMessageHandler> CreateHttpMock(HttpResponseMessage expected)
+        {
+            var mock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            mock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(expected)
+                .Verifiable();
+            return mock;
+        }
+
         [TestMethod]
         public async Task GetPurchaseTest()
         {
@@ -60,36 +72,91 @@ namespace CustomerPurchases.Controllers.Tests
             Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
         }
 
-        // TODO - Mocks with working factories & clients 
-        //[TestMethod]
-        //public void PutPurchaseTest()
-        //{
-        //    Assert.Fail();
-        //}
+        [TestMethod]
+        public async Task PutPurchaseTest()
+        {
+            // Arrange
+            var purchases = new List<Purchase>
+            {
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
+            };
+            var repo = new FakePurchaseRepo(purchases);
+            var factory = new Mock<IHttpClientFactory>();
+            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object, null);
+            var newPurchase = new Purchase
+            {
+                Id = 3,
+                AccountId = 1,
+                AddressId = 1,
+                ProductId = 2,
+                Qty = 5,
+                OrderStatus = "In Progress"
+            };
 
-        //[TestMethod]
-        //public void PutPurchaseTest_NotExists()
-        //{
-        //    Assert.Fail();
-        //}
+            // Act
+            var result = await controller.PutPurchase(newPurchase.Id, newPurchase);
 
-        //[TestMethod]
-        //public void PostPurchaseTest()
-        //{
-        //    Assert.Fail();
-        //}
+            // Assert
+            Assert.AreEqual(purchases.FirstOrDefault(p => p.Id == newPurchase.Id), newPurchase);
+        }
 
-        //[TestMethod]
-        //public void PostPurchaseTest_Exists()
-        //{
-        //    Assert.Fail();
-        //}
+        [TestMethod]
+        public async Task PutPurchaseTest_AlreadyExists()
+        {
+            // Arrange
+            var purchases = new List<Purchase>
+            {
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
+            };
+            var repo = new FakePurchaseRepo(purchases);
+            var factory = new Mock<IHttpClientFactory>();
+            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object, null);
+            var newPurchase = new Purchase
+            {
+                Id = 1,
+                AccountId = 1,
+                AddressId = 1,
+                ProductId = 2,
+                Qty = 5,
+                OrderStatus = "In Progress"
+            };
 
-        //[TestMethod]
-        //public void PostPurchaseTest_InvalidPurchase()
-        //{
-        //    Assert.Fail();
-        //}
+            // Act
+            var result = await controller.PutPurchase(newPurchase.Id, newPurchase);
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(NoContentResult));
+        }
+
+        [TestMethod]
+        public async Task PutPurchaseTest_IdNoMatch()
+        {
+            // Arrange
+            var purchases = new List<Purchase>
+            {
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
+            };
+            var repo = new FakePurchaseRepo(purchases);
+            var factory = new Mock<IHttpClientFactory>();
+            var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object, null);
+            var newPurchase = new Purchase
+            {
+                AccountId = 1,
+                AddressId = 1,
+                ProductId = 2,
+                Qty = 5,
+                OrderStatus = "In Progress"
+            };
+
+            // Act
+            var result = await controller.PutPurchase(6, newPurchase);
+
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(BadRequestResult));
+        }
 
         [TestMethod]
         public async Task DeletePurchaseTest()
@@ -179,5 +246,46 @@ namespace CustomerPurchases.Controllers.Tests
             // Assert
             Assert.IsNull(result);
         }
+
+        // TODO - Use Mocks & etc. For HttpClient, ClientFactory and Config
+        //[TestMethod]
+        //public async Task PostPurchaseTest()
+        //{
+        //    // Arrange
+        //    var purchases = new List<Purchase>
+        //    {
+        //        new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
+        //        new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
+        //    };
+        //    var repo = new FakePurchaseRepo(purchases);
+        //    var factory = new Mock<IHttpClientFactory>();
+        //    var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object, null);
+        //    var newPurchase = new Purchase
+        //    {
+        //        AccountId = 1,
+        //        AddressId = 1,
+        //        ProductId = 2,
+        //        Qty = 5,
+        //        OrderStatus = "In Progress"
+        //    };
+
+        //    // Act
+        //    var result = await controller.PostPurchase(newPurchase);
+
+        //    // Assert
+        //    Assert.AreEqual(newPurchase, purchases.FirstOrDefault(p => p.Id == 3));
+        //}
+
+        //[TestMethod]
+        //public void PostPurchaseTest_Exists()
+        //{
+        //    Assert.Fail();
+        //}
+
+        //[TestMethod]
+        //public void PostPurchaseTest_InvalidPurchase()
+        //{
+        //    Assert.Fail();
+        //}
     }
 }
