@@ -13,16 +13,16 @@ using Microsoft.Extensions.Logging;
 
 namespace CustomerPurchases.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Purchases")]
     [ApiController]
-    public class PurchasesController : ControllerBase
+    public class PurchasesApiController : ControllerBase
     {
         private readonly IPurchaseRepo _repository;
-        private readonly ILogger<PurchasesController> _logger;
+        private readonly ILogger<PurchasesApiController> _logger;
         private readonly IHttpClientFactory _clientFactory;
         private readonly IConfiguration _config;
 
-        public PurchasesController(IPurchaseRepo purchaseRepo, ILogger<PurchasesController> logger, IHttpClientFactory clientFactory, IConfiguration config)
+        public PurchasesApiController(IPurchaseRepo purchaseRepo, ILogger<PurchasesApiController> logger, IHttpClientFactory clientFactory, IConfiguration config)
         {
             _repository = purchaseRepo;
             _logger = logger;
