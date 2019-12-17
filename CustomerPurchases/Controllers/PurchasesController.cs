@@ -47,6 +47,10 @@ namespace CustomerPurchases.Controllers
         public async Task<IActionResult> Create()
         {
             ViewData["ProductId"] = new SelectList(await _productServ.GetAll(), "Id", "Id");
+            // TODO - Populate these viewbags
+            ViewData["AddressId"] = null;
+            ViewData["AccountId"] = null;
+
             return View();
         }
 

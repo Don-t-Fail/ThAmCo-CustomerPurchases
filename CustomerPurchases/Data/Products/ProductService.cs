@@ -32,11 +32,13 @@ namespace CustomerPurchases.Data.Products
                 Id = p.Id,
                 Name = p.Name
             }).ToListAsync();
+            // If products exist in database, connection is working, return
             if (products.Count != 0)
             {
                 return products;
             }
 
+            // Else, try to GET from products service
             var client = _clientFactory.CreateClient("RetryAndBreak");
             client.BaseAddress = new Uri(_config["ProductsUrl"]);
 
