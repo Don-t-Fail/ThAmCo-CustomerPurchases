@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CustomerPurchases.Data;
+using CustomerPurchases.Data.Products;
+using CustomerPurchases.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CustomerPurchases.Data;
-using CustomerPurchases.Data.Products;
-using CustomerPurchases.Models;
+using System.Threading.Tasks;
 
 namespace CustomerPurchases.Controllers
 {
@@ -108,7 +105,7 @@ namespace CustomerPurchases.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (! await PurchaseExists(purchase.Id))
+                    if (!await PurchaseExists(purchase.Id))
                     {
                         return NotFound();
                     }

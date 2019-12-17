@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CustomerPurchases.Models;
+﻿using CustomerPurchases.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,9 +37,9 @@ namespace CustomerPurchases.Data
                 );
 
                 builder.Entity<CustomerAddress>().HasData(
-                    new CustomerAddress { Id = 1, AccountId = 1, Address = "This is an address"},
-                    new CustomerAddress { Id = 2, AccountId = 2, Address = "This is an address"},
-                    new CustomerAddress { Id = 3, AccountId = 1, Address = "This is also an address"}
+                    new CustomerAddress { Id = 1, AccountId = 1, Address = "This is an address" },
+                    new CustomerAddress { Id = 2, AccountId = 2, Address = "This is an address" },
+                    new CustomerAddress { Id = 3, AccountId = 1, Address = "This is also an address" }
                 );
 
                 builder.Entity<CustomerTel>().HasData(
@@ -59,9 +55,9 @@ namespace CustomerPurchases.Data
                 );
 
                 builder.Entity<Purchase>().HasData(
-                    new Purchase { Id = 1, AccountId = 1, ProductId = 1, AddressId = 1, OrderStatus = "Placed", Qty = 1},
-                    new Purchase { Id = 2, ProductId = 1, AccountId = 1, AddressId = 3, OrderStatus = "Complete", Qty = 4},
-                    new Purchase { Id = 3, AddressId = 2, AccountId = 3, OrderStatus = "In Progress", ProductId = 3, Qty = 2}
+                    new Purchase { Id = 1, AccountId = 1, ProductId = 1, AddressId = 1, OrderStatus = "Placed", Qty = 1 },
+                    new Purchase { Id = 2, ProductId = 1, AccountId = 1, AddressId = 3, OrderStatus = "Complete", Qty = 4 },
+                    new Purchase { Id = 3, AddressId = 2, AccountId = 3, OrderStatus = "In Progress", ProductId = 3, Qty = 2 }
                 );
             }
         }

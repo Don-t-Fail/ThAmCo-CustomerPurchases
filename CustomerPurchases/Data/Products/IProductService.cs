@@ -1,9 +1,6 @@
-﻿using System;
+﻿using CustomerPurchases.Models.DTOs;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using CustomerPurchases.Models;
-using CustomerPurchases.Models.DTOs;
 
 namespace CustomerPurchases.Data.Products
 {

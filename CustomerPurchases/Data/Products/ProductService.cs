@@ -1,15 +1,12 @@
-﻿using System;
+﻿using CustomerPurchases.Models.DTOs;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using CustomerPurchases.Models;
-using CustomerPurchases.Models.DTOs;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace CustomerPurchases.Data.Products
 {
@@ -32,7 +29,7 @@ namespace CustomerPurchases.Data.Products
         {
             var products = await _context.Product.Select(p => new ProductDto
             {
-                
+
             }).ToListAsync();
             if (products.Count != 0)
             {
