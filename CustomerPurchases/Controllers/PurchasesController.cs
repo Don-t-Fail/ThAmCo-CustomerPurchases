@@ -1,130 +1,156 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CustomerPurchases.Data;
+﻿using CustomerPurchases.Data;
+using CustomerPurchases.Data.Products;
 using CustomerPurchases.Models;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace CustomerPurchases.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class PurchasesController : ControllerBase
+    public class PurchasesController : Controller
     {
         private readonly IPurchaseRepo _repository;
-        private readonly ILogger<PurchasesController> _logger;
-        private readonly IHttpClientFactory _clientFactory;
-        private readonly IConfiguration _config;
+        private readonly IProductService _productServ;
 
-        public PurchasesController(IPurchaseRepo purchaseRepo, ILogger<PurchasesController> logger, IHttpClientFactory clientFactory, IConfiguration config)
+        public PurchasesController(IPurchaseRepo repository, IProductService prodServ)
         {
-            _repository = purchaseRepo;
-            _logger = logger;
-            _clientFactory = clientFactory;
-            _config = config;
+            _repository = repository;
+            _productServ = prodServ;
         }
 
-        // GET: api/Purchases/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Purchase>> GetPurchase(int id)
+        // GET: Purchases
+        public async Task<IActionResult> Index()
         {
-            var purchase = await _repository.GetPurchase(id);
+            var repo = await _repository.GetAll();
+            return View(repo);
+        }
 
+        // GET: Purchases/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var purchase = await _repository.GetPurchase(id.Value);
             if (purchase == null)
             {
                 return NotFound();
             }
 
-            return purchase;
+            return View(purchase);
         }
 
-        // PUT: api/Purchases/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPurchase(int id, Purchase purchase)
+        // GET: Purchases/Create
+        public async Task<IActionResult> Create()
+        {
+            ViewData["ProductId"] = new SelectList(await _productServ.GetAll(), "Id", "Id");
+            // TODO - Populate these viewbags
+            ViewData["AddressId"] = null;
+            ViewData["AccountId"] = null;
+
+            return View();
+        }
+
+        // POST: Purchases/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,ProductId,Qty,AddressId,AccountId,OrderStatus")] Purchase purchase)
+        {
+            if (ModelState.IsValid)
+            {
+                _repository.InsertPurchase(purchase);
+                await _repository.Save();
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["ProductId"] = new SelectList(await _productServ.GetAll(), "Id", "Id", purchase.ProductId);
+            return View(purchase);
+        }
+
+        // GET: Purchases/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var purchase = await _repository.GetPurchase(id.Value);
+            if (purchase == null)
+            {
+                return NotFound();
+            }
+            ViewData["ProductId"] = new SelectList(await _productServ.GetAll(), "Id", "Id", purchase.ProductId);
+            return View(purchase);
+        }
+
+        // POST: Purchases/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductId,Qty,AddressId,AccountId,OrderStatus")] Purchase purchase)
         {
             if (id != purchase.Id)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _repository.InsertPurchase(purchase);
-
-            // TODO - Implement Pushing updated purchases to Reviews Service
-
-            try
+            if (ModelState.IsValid)
             {
-                await _repository.Save();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (! await PurchaseExists(id))
+                try
                 {
-                    return NotFound();
+                    _repository.UpdatePurchase(purchase);
+                    await _repository.Save();
                 }
-                else
+                catch (DbUpdateConcurrencyException)
                 {
-                    throw;
+                    if (!await PurchaseExists(purchase.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
+                return RedirectToAction(nameof(Index));
             }
-
-            return NoContent();
+            ViewData["ProductId"] = new SelectList(await _productServ.GetAll(), "Id", "Id", purchase.ProductId);
+            return View(purchase);
         }
 
-        // POST: api/Purchases
-        [HttpPost]
-        public async Task<ActionResult<Purchase>> PostPurchase(Purchase purchase)
+        // GET: Purchases/Delete/5
+        public async Task<IActionResult> Delete(int? id)
         {
-            _repository.InsertPurchase(purchase);
-            await _repository.Save();
-
-            _logger.LogInformation("Communicating with Reviews API");
-            var client = _clientFactory.CreateClient("RetryAndBreak");
-            client.BaseAddress = new System.Uri(_config["ReviewsURL"]);
-
-            var resp = await client.PostAsJsonAsync("api/Purchases/", purchase);
-            if (resp.IsSuccessStatusCode)
+            if (id == null)
             {
-                return CreatedAtAction("GetPurchase", new { id = purchase.Id }, purchase);
+                return NotFound();
             }
 
-            return BadRequest();
-        }
-
-        // DELETE: api/Purchases/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Purchase>> DeletePurchase(int id)
-        {
-            // TODO - Soft Deletion
-            var purchase = await _repository.GetPurchase(id);
+            var purchase = await _repository.GetPurchase(id.Value);
             if (purchase == null)
             {
                 return NotFound();
             }
 
+            return View(purchase);
+        }
+
+        // POST: Purchases/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
             _repository.DeletePurchase(id);
             await _repository.Save();
-
-            return purchase;
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: api/Purchases?AccId=5
-        [HttpGet]
-        public async Task<IEnumerable<Purchase>> GetPurchaseAccount(int accId)
-        {
-            var purchases = await _repository.GetPurchaseByAccount(accId);
-            if (purchases.Any())
-            {
-                return purchases;
-            }
-
-            return null;
-        }
         private async Task<bool> PurchaseExists(int id)
         {
             return await _repository.GetPurchase(id) != null;
