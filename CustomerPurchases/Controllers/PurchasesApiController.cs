@@ -51,7 +51,7 @@ namespace CustomerPurchases.Controllers
                 return BadRequest();
             }
 
-            _repository.UpdatePurchase(purchase);
+            _repository.InsertPurchase(purchase);
 
             // TODO - Implement Pushing updated purchases to Reviews Service
 
