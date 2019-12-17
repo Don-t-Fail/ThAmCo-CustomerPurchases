@@ -145,25 +145,6 @@ namespace CustomerPurchases.Controllers.Tests
             Assert.IsInstanceOfType(result, typeof(BadRequestResult));
         }
 
-        // TODO - Mocks with working factories & clients
-        //[TestMethod]
-        //public void PostPurchaseTest()
-        //{
-        //    Assert.Fail();
-        //}
-
-        //[TestMethod]
-        //public void PostPurchaseTest_Exists()
-        //{
-        //    Assert.Fail();
-        //}
-
-        //[TestMethod]
-        //public void PostPurchaseTest_InvalidPurchase()
-        //{
-        //    Assert.Fail();
-        //}
-
         [TestMethod]
         public async Task DeletePurchaseTest()
         {
@@ -252,5 +233,46 @@ namespace CustomerPurchases.Controllers.Tests
             // Assert
             Assert.IsNull(result);
         }
+
+        // TODO - Use Mocks & etc. For HttpClient, ClientFactory and Config
+        //[TestMethod]
+        //public async Task PostPurchaseTest()
+        //{
+        //    // Arrange
+        //    var purchases = new List<Purchase>
+        //    {
+        //        new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
+        //        new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
+        //    };
+        //    var repo = new FakePurchaseRepo(purchases);
+        //    var factory = new Mock<IHttpClientFactory>();
+        //    var controller = new PurchasesController(repo, new NullLogger<PurchasesController>(), factory.Object, null);
+        //    var newPurchase = new Purchase
+        //    {
+        //        AccountId = 1,
+        //        AddressId = 1,
+        //        ProductId = 2,
+        //        Qty = 5,
+        //        OrderStatus = "In Progress"
+        //    };
+
+        //    // Act
+        //    var result = await controller.PostPurchase(newPurchase);
+
+        //    // Assert
+        //    Assert.AreEqual(newPurchase, purchases.FirstOrDefault(p => p.Id == 3));
+        //}
+
+        //[TestMethod]
+        //public void PostPurchaseTest_Exists()
+        //{
+        //    Assert.Fail();
+        //}
+
+        //[TestMethod]
+        //public void PostPurchaseTest_InvalidPurchase()
+        //{
+        //    Assert.Fail();
+        //}
     }
 }
