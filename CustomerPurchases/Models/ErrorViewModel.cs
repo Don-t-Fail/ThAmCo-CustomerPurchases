@@ -1,3 +1,5 @@
+using System;
+
 namespace CustomerPurchases.Models
 {
     public class ErrorViewModel

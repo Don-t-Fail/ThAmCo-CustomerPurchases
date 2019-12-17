@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CustomerPurchases.Models
 {
@@ -9,6 +12,6 @@ namespace CustomerPurchases.Models
 
         public virtual ICollection<Purchase> Purchases { get; set; }
         public virtual ICollection<CustomerTel> CustomerTels { get; set; }
-        public virtual ICollection<CustomerAddress> CustomerAddresses { get; set; }
+        public virtual  ICollection<CustomerAddress> CustomerAddresses { get; set; }
     }
 }
