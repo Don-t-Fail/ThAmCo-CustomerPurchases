@@ -13,6 +13,7 @@ namespace CustomerPurchases.Models
         public int AddressId { get; set; }
         public int AccountId { get; set; }
         public string OrderStatus { get; set; }
+        public DateTime TimeStamp { get; set; }
 
         public virtual Product Product { get; set; }
     }

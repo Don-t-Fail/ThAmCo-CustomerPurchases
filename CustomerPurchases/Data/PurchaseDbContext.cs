@@ -59,9 +59,9 @@ namespace CustomerPurchases.Data
                 );
 
                 builder.Entity<Purchase>().HasData(
-                    new Purchase { Id = 1, AccountId = 1, ProductId = 1, AddressId = 1, OrderStatus = "Placed", Qty = 1},
-                    new Purchase { Id = 2, ProductId = 1, AccountId = 1, AddressId = 3, OrderStatus = "Complete", Qty = 4},
-                    new Purchase { Id = 3, AddressId = 2, AccountId = 3, OrderStatus = "In Progress", ProductId = 3, Qty = 2}
+                    new Purchase { Id = 1, AccountId = 1, ProductId = 1, AddressId = 1, OrderStatus = "Placed", Qty = 1, TimeStamp = DateTime.Now},
+                    new Purchase { Id = 2, ProductId = 1, AccountId = 1, AddressId = 3, OrderStatus = "Complete", Qty = 4, TimeStamp = DateTime.Now },
+                    new Purchase { Id = 3, AddressId = 2, AccountId = 3, OrderStatus = "In Progress", ProductId = 3, Qty = 2, TimeStamp = DateTime.Now }
                 );
             }
         }
