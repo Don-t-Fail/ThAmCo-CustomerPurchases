@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using CustomerPurchases.Data.Purchases;
 
 namespace CustomerPurchases.Controllers.Tests
 {
@@ -36,8 +37,8 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var purchases = new List<Purchase>
             {
-                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
-                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 2, Qty = 7}
             };
             var repo = new FakePurchaseRepo(purchases);
             var factory = new Mock<IHttpClientFactory>();
@@ -57,8 +58,8 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var purchases = new List<Purchase>
             {
-                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
-                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 2, Qty = 7}
             };
             var repo = new FakePurchaseRepo(purchases);
             var factory = new Mock<IHttpClientFactory>();
@@ -78,8 +79,8 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var purchases = new List<Purchase>
             {
-                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
-                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 2, Qty = 7}
             };
             var repo = new FakePurchaseRepo(purchases);
             var factory = new Mock<IHttpClientFactory>();
@@ -107,8 +108,8 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var purchases = new List<Purchase>
             {
-                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
-                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 2, Qty = 7}
             };
             var repo = new FakePurchaseRepo(purchases);
             var factory = new Mock<IHttpClientFactory>();
@@ -120,7 +121,7 @@ namespace CustomerPurchases.Controllers.Tests
                 AddressId = 1,
                 ProductId = 2,
                 Qty = 5,
-                OrderStatus = "In Progress"
+                OrderStatus = OrderStatus.Shipped
             };
 
             // Act
@@ -136,8 +137,8 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var purchases = new List<Purchase>
             {
-                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
-                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 2, Qty = 7}
             };
             var repo = new FakePurchaseRepo(purchases);
             var factory = new Mock<IHttpClientFactory>();
@@ -148,7 +149,7 @@ namespace CustomerPurchases.Controllers.Tests
                 AddressId = 1,
                 ProductId = 2,
                 Qty = 5,
-                OrderStatus = "In Progress"
+                OrderStatus = OrderStatus.Shipped
             };
 
             // Act
@@ -164,8 +165,8 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var purchases = new List<Purchase>
             {
-                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
-                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 2, Qty = 7}
             };
             var repo = new FakePurchaseRepo(purchases);
             var factory = new Mock<IHttpClientFactory>();
@@ -185,8 +186,8 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var purchases = new List<Purchase>
             {
-                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
-                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 2, Qty = 7}
             };
             var repo = new FakePurchaseRepo(purchases);
             var factory = new Mock<IHttpClientFactory>();
@@ -206,10 +207,10 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var purchases = new List<Purchase>
             {
-                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
-                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7},
-                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
-                new Purchase { Id = 1, AccountId = 2, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2}
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 2, Qty = 7},
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
+                new Purchase { Id = 1, AccountId = 2, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2}
             };
             var repo = new FakePurchaseRepo(purchases);
             var factory = new Mock<IHttpClientFactory>();
@@ -230,10 +231,10 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var purchases = new List<Purchase>
             {
-                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
-                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7},
-                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
-                new Purchase { Id = 1, AccountId = 2, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2}
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 2, Qty = 7},
+                new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
+                new Purchase { Id = 1, AccountId = 2, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2}
             };
             var repo = new FakePurchaseRepo(purchases);
             var factory = new Mock<IHttpClientFactory>();
@@ -254,8 +255,8 @@ namespace CustomerPurchases.Controllers.Tests
         //    // Arrange
         //    var purchases = new List<Purchase>
         //    {
-        //        new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 1, Qty = 2},
-        //        new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = "Complete", ProductId = 2, Qty = 7}
+        //        new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
+        //        new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 2, Qty = 7}
         //    };
         //    var repo = new FakePurchaseRepo(purchases);
         //    var factory = new Mock<IHttpClientFactory>();
@@ -266,7 +267,7 @@ namespace CustomerPurchases.Controllers.Tests
         //        AddressId = 1,
         //        ProductId = 2,
         //        Qty = 5,
-        //        OrderStatus = "In Progress"
+        //        OrderStatus = OrderStatus.Shipped
         //    };
 
         //    // Act
