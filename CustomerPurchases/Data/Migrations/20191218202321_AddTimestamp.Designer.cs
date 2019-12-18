@@ -4,14 +4,16 @@ using CustomerPurchases.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CustomerPurchases.Migrations
 {
     [DbContext(typeof(PurchaseDbContext))]
-    partial class PurchaseContextModelSnapshot : ModelSnapshot
+    [Migration("20191218202321_AddTimestamp")]
+    partial class AddTimestamp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -190,30 +192,30 @@ namespace CustomerPurchases.Migrations
                             Id = 1,
                             AccountId = 1,
                             AddressId = 1,
-                            OrderStatus = "Created",
+                            OrderStatus = "Placed",
                             ProductId = 1,
                             Qty = 1,
-                            TimeStamp = new DateTime(2019, 12, 18, 20, 24, 47, 563, DateTimeKind.Local).AddTicks(2965)
+                            TimeStamp = new DateTime(2019, 12, 18, 20, 23, 20, 955, DateTimeKind.Local).AddTicks(7761)
                         },
                         new
                         {
                             Id = 2,
                             AccountId = 1,
                             AddressId = 3,
-                            OrderStatus = "Completed",
+                            OrderStatus = "Complete",
                             ProductId = 1,
                             Qty = 4,
-                            TimeStamp = new DateTime(2019, 12, 18, 20, 24, 47, 566, DateTimeKind.Local).AddTicks(9532)
+                            TimeStamp = new DateTime(2019, 12, 18, 20, 23, 20, 959, DateTimeKind.Local).AddTicks(6240)
                         },
                         new
                         {
                             Id = 3,
                             AccountId = 3,
                             AddressId = 2,
-                            OrderStatus = "Shipped",
+                            OrderStatus = "In Progress",
                             ProductId = 3,
                             Qty = 2,
-                            TimeStamp = new DateTime(2019, 12, 18, 20, 24, 47, 566, DateTimeKind.Local).AddTicks(9549)
+                            TimeStamp = new DateTime(2019, 12, 18, 20, 23, 20, 959, DateTimeKind.Local).AddTicks(6257)
                         });
                 });
 
