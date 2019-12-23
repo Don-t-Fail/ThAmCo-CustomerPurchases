@@ -1,4 +1,5 @@
-﻿using CustomerPurchases.Data;
+﻿using System;
+using CustomerPurchases.Data;
 using CustomerPurchases.Data.Products;
 using CustomerPurchases.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -46,6 +47,7 @@ namespace CustomerPurchases.Controllers
         // GET: Purchases/Create
         public async Task<IActionResult> Create()
         {
+            // TODO - Check stock, Address, Phone no
             ViewData["ProductId"] = new SelectList(await _productServ.GetAll(), "Id", "Id");
             // TODO - Populate these viewbags
             ViewData["AddressId"] = null;
@@ -61,6 +63,7 @@ namespace CustomerPurchases.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ProductId,Qty,AddressId,AccountId,OrderStatus")] Purchase purchase)
         {
+            // TODO - Check stock, Address, Phone no
             if (ModelState.IsValid)
             {
                 purchase.TimeStamp = DateTime.Now;
