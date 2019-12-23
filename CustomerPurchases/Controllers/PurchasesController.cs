@@ -63,6 +63,7 @@ namespace CustomerPurchases.Controllers
         {
             if (ModelState.IsValid)
             {
+                purchase.TimeStamp = DateTime.Now;
                 _repository.InsertPurchase(purchase);
                 await _repository.Save();
                 return RedirectToAction(nameof(Index));
