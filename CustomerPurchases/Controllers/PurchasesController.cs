@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using CustomerPurchases.Models.DTOs;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
+using CustomerPurchases.Models.ViewModels;
 
 namespace CustomerPurchases.Controllers
 {
@@ -65,9 +66,16 @@ namespace CustomerPurchases.Controllers
         // GET: Purchases/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["ProductId"] = new SelectList(await _productServ.GetAll(), "Id", "Id");
+            var products = await _productServ.GetAll();
+            if (products.Count != 0)
+            {
+                ViewData["ProductId"] = new SelectList(products, "Id", "Name");
+                
+                // TODO - Pre-Populate and make unalterable certain values, once proper routing and security is setup
 
-            return View();
+                return View();
+            }
+            return BadRequest("An error occurred connecting to the Products Service");
         }
 
         // POST: Purchases/Create
@@ -79,7 +87,6 @@ namespace CustomerPurchases.Controllers
         {
             if (ModelState.IsValid)
             {
-                // TODO - Check Stock
                 var client = _clientFactory.CreateClient("RetryAndBreak");
                 client.BaseAddress = new System.Uri(_config["StockURL"]);
                 var resp = await client.GetAsync("api/stock/");
@@ -99,7 +106,17 @@ namespace CustomerPurchases.Controllers
                 }
             }
             ViewData["ProductId"] = new SelectList(await _productServ.GetAll(), "Id", "Id", purchase.ProductId);
-            return View(purchase);
+            var purchaseView = new PurchaseCreateViewModel
+            {
+                AccountId = purchase.AccountId,
+                AddressId = purchase.AddressId,
+                Id = purchase.Id,
+                OrderStatus = purchase.OrderStatus,
+                ProductId = purchase.ProductId,
+                Qty = purchase.Qty,
+                TimeStamp = purchase.TimeStamp
+            };
+            return View(purchaseView);
         }
 
         // GET: Purchases/Edit/5
@@ -200,18 +217,6 @@ namespace CustomerPurchases.Controllers
 
             return NotFound();
         }
-        
-        // TODO - Implement separately
-        //public async Task<IActionResult> OrderHistory(int accId)
-        //{
-        //    var purchases = await _repository.GetPurchaseByAccount(accId);
-        //    if (purchases.Any())
-        //    {
-        //        return View("OrderHistory",purchases);
-        //    }
-
-        //    return View();
-        //}
 
         private async Task<bool> PurchaseExists(int id)
         {

@@ -27,30 +27,17 @@ namespace CustomerPurchases.Data.Products
 
         public async Task<List<ProductDto>> GetAll()
         {
-            var products = await _context.Product.Select(p => new ProductDto
-            {
-                Id = p.Id,
-                Name = p.Name
-            }).ToListAsync();
-            // If products exist in database, connection is working, return
-            if (products.Count != 0)
-            {
-                return products;
-            }
-
-            // Else, try to GET from products service
             var client = _clientFactory.CreateClient("RetryAndBreak");
             client.BaseAddress = new Uri(_config["ProductsUrl"]);
 
             _logger.LogInformation("Contacting Products Service");
 
-            var resp = await client.GetAsync("api/products/GetAll");
-            var productsExt = new List<ProductDto>();
+            var resp = await client.GetAsync("products/GetAllProducts");
 
             if (resp.IsSuccessStatusCode)
             {
-                products = await resp.Content.ReadAsAsync<List<ProductDto>>();
-                return productsExt;
+                var products = await resp.Content.ReadAsAsync<List<ProductDto>>();
+                return products;
             }
 
             return null;

@@ -31,18 +31,18 @@ namespace CustomerPurchases.Data
             base.OnModelCreating(builder);
             if (HostEnv != null && HostEnv.IsDevelopment())
             {
-                //SeedData
-                builder.Entity<Product>().HasData(
-                    new Product { Id = 1, Name = "Hydrogen", StockLevel = 1 },
-                    new Product { Id = 2, Name = "Helium", StockLevel = 0 },
-                    new Product { Id = 3, Name = "Lithium", StockLevel = 300 }
-                );
+                ////SeedData
+                //builder.Entity<Product>().HasData(
+                //    new Product { Id = 1, Name = "Hydrogen", StockLevel = 1 },
+                //    new Product { Id = 2, Name = "Helium", StockLevel = 0 },
+                //    new Product { Id = 3, Name = "Lithium", StockLevel = 300 }
+                //);
 
-                builder.Entity<Purchase>().HasData(
-                    new Purchase { Id = 1, AccountId = 1, ProductId = 1, AddressId = 1, OrderStatus = OrderStatus.Created, Qty = 1, TimeStamp = DateTime.Now},
-                    new Purchase { Id = 2, ProductId = 1, AccountId = 1, AddressId = 3, OrderStatus = OrderStatus.Completed, Qty = 4, TimeStamp = DateTime.Now },
-                    new Purchase { Id = 3, AddressId = 2, AccountId = 3, OrderStatus = OrderStatus.Shipped, ProductId = 3, Qty = 2, TimeStamp = DateTime.Now }
-                );
+                //builder.Entity<Purchase>().HasData(
+                //    new Purchase { Id = 1, AccountId = 1, ProductId = 1, AddressId = 1, OrderStatus = OrderStatus.Created, Qty = 1, TimeStamp = DateTime.Now},
+                //    new Purchase { Id = 2, ProductId = 1, AccountId = 1, AddressId = 3, OrderStatus = OrderStatus.Completed, Qty = 4, TimeStamp = DateTime.Now },
+                //    new Purchase { Id = 3, AddressId = 2, AccountId = 3, OrderStatus = OrderStatus.Shipped, ProductId = 3, Qty = 2, TimeStamp = DateTime.Now }
+                //);
             }
         }
     }

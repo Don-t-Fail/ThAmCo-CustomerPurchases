@@ -4,14 +4,16 @@ using CustomerPurchases.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CustomerPurchases.Migrations
 {
     [DbContext(typeof(PurchaseDbContext))]
-    partial class PurchaseContextModelSnapshot : ModelSnapshot
+    [Migration("20200102204728_RemoveUnecessarySeedData")]
+    partial class RemoveUnecessarySeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
