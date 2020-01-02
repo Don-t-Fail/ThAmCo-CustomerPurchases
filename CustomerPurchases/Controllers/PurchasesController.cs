@@ -184,20 +184,20 @@ namespace CustomerPurchases.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IEnumerable<Purchase>> GetPurchaseAccount(int accId)
+        public async Task<IActionResult> OrderHistory(int accId)
         {
             var purchases = await _repository.GetPurchaseByAccount(accId);
             if (purchases.Any())
             {
-                return purchases;
+                return View("OrderHistory",purchases);
             }
 
-            return null;
+            return View();
         }
 
-    private async Task<bool> PurchaseExists(int id)
-            {
-                return await _repository.GetPurchase(id) != null;
-            }
+        private async Task<bool> PurchaseExists(int id)
+        {
+            return await _repository.GetPurchase(id) != null;
+        }
     }
 }
