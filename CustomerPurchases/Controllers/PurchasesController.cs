@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using CustomerPurchases.Models.DTOs;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
 
 namespace CustomerPurchases.Controllers
 {
@@ -194,9 +195,9 @@ namespace CustomerPurchases.Controllers
             return null;
         }
 
-private async Task<bool> PurchaseExists(int id)
-        {
-            return await _repository.GetPurchase(id) != null;
-        }
+    private async Task<bool> PurchaseExists(int id)
+            {
+                return await _repository.GetPurchase(id) != null;
+            }
     }
 }
