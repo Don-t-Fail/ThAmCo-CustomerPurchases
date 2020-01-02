@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CustomerPurchases.Data;
+using CustomerPurchases.Data.Products;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -53,6 +54,7 @@ namespace CustomerPurchases
                     p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
             services.AddScoped<IPurchaseRepo, PurchaseRepo>();
+            services.AddScoped<IProductService, ProductService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

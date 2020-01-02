@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using CustomerPurchases.Data;
 using CustomerPurchases.Data.Products;
 using CustomerPurchases.Models;
@@ -6,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using CustomerPurchases.Models.DTOs;
+using Microsoft.Extensions.Configuration;
 
 namespace CustomerPurchases.Controllers
 {
@@ -13,11 +16,15 @@ namespace CustomerPurchases.Controllers
     {
         private readonly IPurchaseRepo _repository;
         private readonly IProductService _productServ;
+        private readonly IHttpClientFactory _clientFactory;
+        private readonly IConfiguration _config;
 
-        public PurchasesController(IPurchaseRepo repository, IProductService prodServ)
+        public PurchasesController(IPurchaseRepo repository, IProductService prodServ, IHttpClientFactory factory, IConfiguration config)
         {
             _repository = repository;
             _productServ = prodServ;
+            _clientFactory = factory;
+            _config = config;
         }
 
         // GET: Purchases
@@ -50,8 +57,12 @@ namespace CustomerPurchases.Controllers
             // TODO - Check stock, Address, Phone no
             ViewData["ProductId"] = new SelectList(await _productServ.GetAll(), "Id", "Id");
             // TODO - Populate these viewbags
+            var dummyCustomer = new CustomerInfoDto
+            {
+                CustomerId = 1
+            };
             ViewData["AddressId"] = null;
-            ViewData["AccountId"] = null;
+            ViewData["AccountId"] = dummyCustomer.CustomerId;
 
             return View();
         }
@@ -66,10 +77,24 @@ namespace CustomerPurchases.Controllers
             // TODO - Check stock, Address, Phone no
             if (ModelState.IsValid)
             {
-                purchase.TimeStamp = DateTime.Now;
-                _repository.InsertPurchase(purchase);
-                await _repository.Save();
-                return RedirectToAction(nameof(Index));
+                // TODO - Check Stock
+                var client = _clientFactory.CreateClient("RetryAndBreak");
+                client.BaseAddress = new System.Uri(_config["StockURL"]);
+                var resp = await client.GetAsync("api/stock/");
+
+                if (resp.IsSuccessStatusCode)
+                {
+                    var product = await resp.Content.ReadAsAsync<ProductStockDto>();
+                    if (product.Stock <= 0)
+                    {
+                        return BadRequest("Product is out of stock");
+                    }
+                    // TODO - Check Account info (Address, Phone)
+                    purchase.TimeStamp = DateTime.Now;
+                    _repository.InsertPurchase(purchase);
+                    await _repository.Save();
+                    return RedirectToAction(nameof(Index));
+                }
             }
             ViewData["ProductId"] = new SelectList(await _productServ.GetAll(), "Id", "Id", purchase.ProductId);
             return View(purchase);
