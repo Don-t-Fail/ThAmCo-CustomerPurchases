@@ -217,18 +217,6 @@ namespace CustomerPurchases.Controllers
 
             return NotFound();
         }
-        
-        // TODO - Implement separately
-        //public async Task<IActionResult> OrderHistory(int accId)
-        //{
-        //    var purchases = await _repository.GetPurchaseByAccount(accId);
-        //    if (purchases.Any())
-        //    {
-        //        return View("OrderHistory",purchases);
-        //    }
-
-        //    return View();
-        //}
 
         private async Task<bool> PurchaseExists(int id)
         {
