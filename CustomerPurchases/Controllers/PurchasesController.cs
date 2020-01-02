@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using CustomerPurchases.Data;
 using CustomerPurchases.Data.Products;
@@ -35,7 +36,7 @@ namespace CustomerPurchases.Controllers
         }
 
         // GET: Purchases/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<ActionResult<PurchaseDetailsDto>> Details(int? id)
         {
             if (id == null)
             {
@@ -48,7 +49,16 @@ namespace CustomerPurchases.Controllers
                 return NotFound();
             }
 
-            return View(purchase);
+            return Ok(new PurchaseDetailsDto
+            {
+                Id = purchase.Id,
+                AccountId = purchase.AccountId,
+                AddressId = purchase.AddressId,
+                OrderStatus = purchase.OrderStatus,
+                ProductId = purchase.ProductId,
+                Qty = purchase.Qty,
+                TimeStamp = purchase.TimeStamp
+            });
         }
 
         // GET: Purchases/Create
@@ -56,13 +66,6 @@ namespace CustomerPurchases.Controllers
         {
             // TODO - Check stock, Address, Phone no
             ViewData["ProductId"] = new SelectList(await _productServ.GetAll(), "Id", "Id");
-            // TODO - Populate these viewbags
-            var dummyCustomer = new CustomerInfoDto
-            {
-                CustomerId = 1
-            };
-            ViewData["AddressId"] = null;
-            ViewData["AccountId"] = dummyCustomer.CustomerId;
 
             return View();
         }
@@ -180,7 +183,18 @@ namespace CustomerPurchases.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<bool> PurchaseExists(int id)
+        public async Task<IEnumerable<Purchase>> GetPurchaseAccount(int accId)
+        {
+            var purchases = await _repository.GetPurchaseByAccount(accId);
+            if (purchases.Any())
+            {
+                return purchases;
+            }
+
+            return null;
+        }
+
+private async Task<bool> PurchaseExists(int id)
         {
             return await _repository.GetPurchase(id) != null;
         }
