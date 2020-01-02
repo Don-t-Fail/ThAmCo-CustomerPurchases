@@ -25,7 +25,9 @@ namespace CustomerPurchases.Controllers.Tests
             public static List<Purchase> Purchases() => new List<Purchase>
             {
                 new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
-                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 2, Qty = 7}
+                new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 2, Qty = 7},
+                new Purchase { Id = 3, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
+                new Purchase { Id = 4, AccountId = 2, AddressId = 1, OrderStatus = OrderStatus.Shipped, ProductId = 1, Qty = 2}
             };
 
             public static List<ProductDto> Products() => new List<ProductDto>
@@ -120,55 +122,80 @@ namespace CustomerPurchases.Controllers.Tests
             var result = await controller.DeleteConfirmed(purchaseId);
 
             // Assert
-            var purchase = await repo.GetPurchase(purchaseId);
-            Assert.IsNull(purchase);
+            var purchase = await controller.Details(purchaseId);
+            Assert.IsInstanceOfType(purchase.Result, typeof(NotFoundResult));
         }
 
-        //[TestMethod]
-        //public async Task GetPurchaseAccountTest()
-        //{
-        //    // Arrange
-        //    var purchases = new List<Purchase>
-        //    {
-        //        new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
-        //        new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 2, Qty = 7},
-        //        new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
-        //        new Purchase { Id = 1, AccountId = 2, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2}
-        //    };
-        //    var repo = new FakePurchaseRepo(purchases);
-        //    var factory = new Mock<IHttpClientFactory>();
-        //    var controller = new PurchasesApiController(repo, new NullLogger<PurchasesApiController>(), factory.Object, null);
-        //    var accId = 1;
+        [TestMethod]
+        public async Task DeletePurchase_OutOfBounds()
+        {
+            // Arrange
+            var repo = new FakePurchaseRepo(TestData.Purchases());
+            var productRepo = new FakeProductService(TestData.Products());
+            var controller = new PurchasesController(repo, productRepo, null, null);
+            var purchaseId = -6;
 
-        //    // Act
-        //    var expected = purchases.Where(p => p.AccountId == accId);
-        //    var result = await controller.GetPurchaseAccount(accId);
+            // Act
+            var result = await controller.DeleteConfirmed(purchaseId);
 
-        //    // Assert
-        //    Assert.IsTrue(result.SequenceEqual(expected));
-        //}
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(BadRequestResult));
+        }
 
-        //[TestMethod]
-        //public async Task GetPurchaseAccountTest_NotExists()
-        //{
-        //    // Arrange
-        //    var purchases = new List<Purchase>
-        //    {
-        //        new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
-        //        new Purchase { Id = 2, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 2, Qty = 7},
-        //        new Purchase { Id = 1, AccountId = 1, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2},
-        //        new Purchase { Id = 1, AccountId = 2, AddressId = 1, OrderStatus = OrderStatus.Completed, ProductId = 1, Qty = 2}
-        //    };
-        //    var repo = new FakePurchaseRepo(purchases);
-        //    var factory = new Mock<IHttpClientFactory>();
-        //    var controller = new PurchasesApiController(repo, new NullLogger<PurchasesApiController>(), factory.Object, null);
-        //    var accId = 42;
+        [TestMethod]
+        public async Task GetOrderHistoryTest_Success()
+        {
+            // Arrange
+            var repo = new FakePurchaseRepo(TestData.Purchases());
+            var productRepo = new FakeProductService(TestData.Products());
+            var controller = new PurchasesController(repo, productRepo, null, null);
+            var accId = 1;
 
-        //    // Act
-        //    var result = await controller.GetPurchaseAccount(accId);
+            // Act
+            var result = await controller.OrderHistory(accId);
 
-        //    // Assert
-        //    Assert.IsNull(result);
-        //}
+            // Assert
+            Assert.IsNotNull(result);
+            var objResult = result.Result as OkObjectResult;
+            Assert.IsNotNull(objResult);
+            var retResult = objResult.Value as List<Purchase>;
+            Assert.IsNotNull(retResult);
+            //foreach (Purchase purchase in retResult)
+            //{
+            //    Assert.AreEqual(await repo.GetPurchase(purchase.Id), purchase);
+            //}
+        }
+
+        [TestMethod]
+        public async Task GetOrderHistory_NotExists()
+        {
+            // Arrange
+            var repo = new FakePurchaseRepo(TestData.Purchases());
+            var productRepo = new FakeProductService(TestData.Products());
+            var controller = new PurchasesController(repo, productRepo, null, null);
+            var accId = 1000;
+
+            // Act
+            var result = await controller.OrderHistory(accId);
+
+            // Assert
+            Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
+        }
+
+        [TestMethod]
+        public async Task GetOrderHistory_OutOfBounds()
+        {
+            // Arrange
+            var repo = new FakePurchaseRepo(TestData.Purchases());
+            var productRepo = new FakeProductService(TestData.Products());
+            var controller = new PurchasesController(repo, productRepo, null, null);
+            var accId = -6;
+
+            // Act
+            var result = await controller.OrderHistory(accId);
+
+            // Assert
+            Assert.IsInstanceOfType(result.Result, typeof(BadRequestResult));
+        }
     }
 }
