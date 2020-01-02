@@ -179,21 +179,41 @@ namespace CustomerPurchases.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (id == null || id < 0)
+            {
+                return BadRequest();
+            }
             _repository.DeletePurchase(id);
             await _repository.Save();
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> OrderHistory(int accId)
+        public async Task<ActionResult<List<Purchase>>> OrderHistory(int accId)
         {
+            if (accId < 0)
+            {
+                return BadRequest();
+            }
             var purchases = await _repository.GetPurchaseByAccount(accId);
             if (purchases.Any())
             {
-                return View("OrderHistory",purchases);
+                return Ok(purchases);
             }
 
-            return View();
+            return NotFound();
         }
+        
+        // TODO - Implement separately
+        //public async Task<IActionResult> OrderHistory(int accId)
+        //{
+        //    var purchases = await _repository.GetPurchaseByAccount(accId);
+        //    if (purchases.Any())
+        //    {
+        //        return View("OrderHistory",purchases);
+        //    }
+
+        //    return View();
+        //}
 
         private async Task<bool> PurchaseExists(int id)
         {
