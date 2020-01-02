@@ -65,7 +65,6 @@ namespace CustomerPurchases.Controllers
         // GET: Purchases/Create
         public async Task<IActionResult> Create()
         {
-            // TODO - Check stock, Address, Phone no
             ViewData["ProductId"] = new SelectList(await _productServ.GetAll(), "Id", "Id");
 
             return View();
@@ -78,7 +77,6 @@ namespace CustomerPurchases.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ProductId,Qty,AddressId,AccountId,OrderStatus")] Purchase purchase)
         {
-            // TODO - Check stock, Address, Phone no
             if (ModelState.IsValid)
             {
                 // TODO - Check Stock
