@@ -87,7 +87,6 @@ namespace CustomerPurchases.Controllers
         {
             if (ModelState.IsValid)
             {
-                // TODO - Check Stock
                 var client = _clientFactory.CreateClient("RetryAndBreak");
                 client.BaseAddress = new System.Uri(_config["StockURL"]);
                 var resp = await client.GetAsync("api/stock/");
