@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using CustomerPurchases.Models.DTOs;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
+using CustomerPurchases.Data.Purchases;
 using CustomerPurchases.Models.ViewModels;
 
 namespace CustomerPurchases.Controllers
@@ -95,7 +96,7 @@ namespace CustomerPurchases.Controllers
             {
                 var client = _clientFactory.CreateClient("RetryAndBreak");
                 client.BaseAddress = new System.Uri(_config["StockURL"]);
-                var resp = await client.GetAsync("api/stock/");
+                var resp = await client.GetAsync("stock/details/"+purchase.ProductId);
 
                 if (resp.IsSuccessStatusCode)
                 {
@@ -106,6 +107,10 @@ namespace CustomerPurchases.Controllers
                     }
                     // TODO - Check Account info (Address, Phone)
                     purchase.TimeStamp = DateTime.Now;
+                    purchase.OrderStatus = OrderStatus.Created;
+
+                    var pProduct = await _productServ.GetProduct(purchase.ProductId);
+                    purchase.Product = new Product {Name = pProduct.Name};
                     _repository.InsertPurchase(purchase);
                     await _repository.Save();
                     return RedirectToAction(nameof(Index));
