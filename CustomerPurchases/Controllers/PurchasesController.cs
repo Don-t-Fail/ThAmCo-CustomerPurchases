@@ -208,14 +208,15 @@ namespace CustomerPurchases.Controllers
             await _repository.Save();
             return RedirectToAction(nameof(Index));
         }
-
-        public async Task<ActionResult<List<Purchase>>> OrderHistory(int accId)
+        
+        [HttpGet]
+        public async Task<ActionResult<List<Purchase>>> OrderHistory(int id)
         {
-            if (accId < 0)
+            if (id < 0)
             {
                 return BadRequest();
             }
-            var purchases = await _repository.GetPurchaseByAccount(accId);
+            var purchases = await _repository.GetPurchaseByAccount(id);
             if (purchases.Any())
             {
                 return Ok(purchases);
