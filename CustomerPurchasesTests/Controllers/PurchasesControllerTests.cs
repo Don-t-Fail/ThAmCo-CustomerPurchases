@@ -41,9 +41,9 @@ namespace CustomerPurchases.Controllers.Tests
             var mock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
             mock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
-        "SendAsync",
-        ItExpr.IsAny<HttpRequestMessage>(),
-        ItExpr.IsAny<CancellationToken>())
+                    "SendAsync",
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>())
                 .ReturnsAsync(expected)
                 .Verifiable();
             return mock;
@@ -196,6 +196,34 @@ namespace CustomerPurchases.Controllers.Tests
 
             // Assert
             Assert.IsInstanceOfType(result.Result, typeof(BadRequestResult));
+        }
+
+        [TestMethod]
+        public async Task GetAll_Success()
+        {
+            // Arrange
+            var repo = new FakePurchaseRepo(TestData.Purchases());
+            var productRepo = new FakeProductService(TestData.Products());
+            var controller = new PurchasesController(repo, productRepo, null, null);
+
+            // Act
+            var result = await controller.GetAll();
+
+            // Assert
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+            var objResult = result.Result as OkObjectResult;
+            Assert.IsNotNull(objResult);
+
+            Assert.IsTrue(retResult.SequenceEqual(TestData.Purchases().Select(p => new PurchaseDetailsDto
+            {
+                AccountId = p.AccountId,
+                AddressId = p.AddressId,
+                Id = p.Id,
+                OrderStatus = p.OrderStatus,
+                ProductId = p.ProductId,
+                Qty = p.Qty,
+                TimeStamp = p.TimeStamp
+            }).ToList()));
         }
     }
 }

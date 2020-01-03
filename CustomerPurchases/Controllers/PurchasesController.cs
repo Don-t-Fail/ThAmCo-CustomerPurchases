@@ -21,6 +21,8 @@ namespace CustomerPurchases.Controllers
         private readonly IProductService _productServ;
         private readonly IHttpClientFactory _clientFactory;
         private readonly IConfiguration _config;
+        
+        public HttpClient HttpClient { get; set; }
 
         public PurchasesController(IPurchaseRepo repository, IProductService prodServ, IHttpClientFactory factory, IConfiguration config)
         {
@@ -216,6 +218,12 @@ namespace CustomerPurchases.Controllers
             }
 
             return NotFound();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<PurchaseDetailsDto>>> GetAll()
+        {
+            return Ok(await _repository.GetAll());
         }
 
         private async Task<bool> PurchaseExists(int id)
