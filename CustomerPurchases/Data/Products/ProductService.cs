@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using CustomerPurchases.Models;
 
 namespace CustomerPurchases.Data.Products
 {
@@ -37,15 +38,37 @@ namespace CustomerPurchases.Data.Products
             if (resp.IsSuccessStatusCode)
             {
                 var products = await resp.Content.ReadAsAsync<List<ProductDto>>();
+                foreach (var product in products)
+                {
+                    if (!_context.Product.Any(p => p.Id == product.Id))
+                    {
+                        await _context.Product.AddAsync(new Product { Name = product.Name });
+                    }
+                }
+
+                await _context.SaveChangesAsync();
                 return products;
             }
 
             return null;
         }
 
-        public Task<ProductDto> GetProduct(int id)
+        public async Task<ProductDto> GetProduct(int id)
         {
-            throw new NotImplementedException();
+            var client = _clientFactory.CreateClient("RetryAndBreak");
+            client.BaseAddress = new Uri(_config["ProductsUrl"]);
+
+            _logger.LogInformation("Contacting Products Service");
+
+            var resp = await client.GetAsync("products/GetProduct/"+id);
+
+            if (resp.IsSuccessStatusCode)
+            {
+                var product = await resp.Content.ReadAsAsync<ProductDto>();
+                return product;
+            }
+
+            return null;
         }
     }
 }

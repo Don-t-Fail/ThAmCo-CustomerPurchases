@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using CustomerPurchases.Models.DTOs;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
+using CustomerPurchases.Data.Purchases;
 using CustomerPurchases.Models.ViewModels;
 
 namespace CustomerPurchases.Controllers
@@ -72,6 +73,10 @@ namespace CustomerPurchases.Controllers
             if (products.Count != 0)
             {
                 ViewData["ProductId"] = new SelectList(products, "Id", "Name");
+                ViewData["AccountId"] = 42;
+                var addresses = new List<AddressDto>()
+                    {new AddressDto {Address = "500 Great Northern Highway", Id = 1}};
+                ViewData["AddressId"] = new SelectList(addresses, "Id", "Address");
                 
                 // TODO - Pre-Populate and make unalterable certain values, once proper routing and security is setup
 
@@ -91,7 +96,7 @@ namespace CustomerPurchases.Controllers
             {
                 var client = _clientFactory.CreateClient("RetryAndBreak");
                 client.BaseAddress = new System.Uri(_config["StockURL"]);
-                var resp = await client.GetAsync("api/stock/");
+                var resp = await client.GetAsync("stock/details/"+purchase.ProductId);
 
                 if (resp.IsSuccessStatusCode)
                 {
@@ -102,6 +107,10 @@ namespace CustomerPurchases.Controllers
                     }
                     // TODO - Check Account info (Address, Phone)
                     purchase.TimeStamp = DateTime.Now;
+                    purchase.OrderStatus = OrderStatus.Created;
+
+                    var pProduct = await _productServ.GetProduct(purchase.ProductId);
+                    purchase.Product = new Product {Name = pProduct.Name};
                     _repository.InsertPurchase(purchase);
                     await _repository.Save();
                     return RedirectToAction(nameof(Index));
@@ -196,7 +205,7 @@ namespace CustomerPurchases.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (id == null || id < 0)
+            if (id < 0)
             {
                 return BadRequest();
             }
@@ -204,14 +213,15 @@ namespace CustomerPurchases.Controllers
             await _repository.Save();
             return RedirectToAction(nameof(Index));
         }
-
-        public async Task<ActionResult<List<Purchase>>> OrderHistory(int accId)
+        
+        [HttpGet]
+        public async Task<ActionResult<List<Purchase>>> OrderHistory(int id)
         {
-            if (accId < 0)
+            if (id < 0)
             {
                 return BadRequest();
             }
-            var purchases = await _repository.GetPurchaseByAccount(accId);
+            var purchases = await _repository.GetPurchaseByAccount(id);
             if (purchases.Any())
             {
                 return Ok(purchases);

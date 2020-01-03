@@ -10,6 +10,8 @@ namespace CustomerPurchases.Data.Products
     {
         private List<ProductDto> _products;
 
+        // TODO - Redo with HTTP Mocking
+
         public FakeProductService(List<ProductDto> products)
         {
             _products = products;

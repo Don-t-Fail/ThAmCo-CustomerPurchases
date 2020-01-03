@@ -8,7 +8,7 @@ namespace CustomerPurchases.Data
 {
     public class FakePurchaseRepo : IPurchaseRepo
     {
-        private List<Purchase> _purchases;
+        private readonly List<Purchase> _purchases;
 
         public FakePurchaseRepo(List<Purchase> purchases)
         {
