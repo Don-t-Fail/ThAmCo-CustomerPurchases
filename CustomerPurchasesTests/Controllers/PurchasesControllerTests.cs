@@ -58,8 +58,7 @@ namespace CustomerPurchasesTests.Controllers
                 var purchaseId = 1;
 
                 // Act
-                var result = await controller.Details(purchaseId);
-            
+                var result = await controller.Details(purchaseId);            
 
                 // Assert
                 Assert.IsNotNull(result);
