@@ -72,6 +72,10 @@ namespace CustomerPurchases.Controllers
             if (products.Count != 0)
             {
                 ViewData["ProductId"] = new SelectList(products, "Id", "Name");
+                ViewData["AccountId"] = 42;
+                var addresses = new List<AddressDto>()
+                    {new AddressDto {Address = "500 Great Northern Highway", Id = 1}};
+                ViewData["AddressId"] = new SelectList(addresses, "Id", "Address");
                 
                 // TODO - Pre-Populate and make unalterable certain values, once proper routing and security is setup
 
