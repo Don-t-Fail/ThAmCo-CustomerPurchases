@@ -1,21 +1,19 @@
-﻿using CustomerPurchases.Data;
-using CustomerPurchases.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Moq.Protected;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using CustomerPurchases.Controllers;
+using CustomerPurchases.Data;
 using CustomerPurchases.Data.Products;
 using CustomerPurchases.Data.Purchases;
+using CustomerPurchases.Models;
 using CustomerPurchases.Models.DTOs;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using Moq.Protected;
 
-namespace CustomerPurchases.Controllers.Tests
+namespace CustomerPurchasesTests.Controllers
 {
     [TestClass]
     public class PurchasesControllerTests
@@ -55,26 +53,29 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var repo = new FakePurchaseRepo(TestData.Purchases());
             var productRepo = new FakeProductService(TestData.Products());
-            var controller = new PurchasesController(repo, productRepo, null, null);
-            var purchaseId = 1;
+            using (var controller = new PurchasesController(repo, productRepo, null, null))
+            {
+                var purchaseId = 1;
 
-            // Act
-            var result = await controller.Details(purchaseId);
+                // Act
+                var result = await controller.Details(purchaseId);
+            
 
-            // Assert
-            Assert.IsNotNull(result);
-            var objResult = result.Result as OkObjectResult;
-            Assert.IsNotNull(objResult);
-            var retResult = objResult.Value as PurchaseDetailsDto;
-            Assert.IsNotNull(retResult);
+                // Assert
+                Assert.IsNotNull(result);
+                var objResult = result.Result as OkObjectResult;
+                Assert.IsNotNull(objResult);
+                var retResult = objResult.Value as PurchaseDetailsDto;
+                Assert.IsNotNull(retResult);
 
-            Assert.AreEqual(TestData.Purchases()[purchaseId - 1].ProductId, retResult.Id);
-            Assert.AreEqual(TestData.Purchases()[purchaseId - 1].ProductId, retResult.ProductId);
-            Assert.AreEqual(TestData.Purchases()[purchaseId - 1].Qty, retResult.Qty);
-            Assert.AreEqual(TestData.Purchases()[purchaseId - 1].AddressId, retResult.AddressId);
-            Assert.AreEqual(TestData.Purchases()[purchaseId - 1].AccountId, retResult.AccountId);
-            Assert.AreEqual(TestData.Purchases()[purchaseId - 1].OrderStatus, retResult.OrderStatus);
-            Assert.AreEqual(TestData.Purchases()[purchaseId - 1].TimeStamp, retResult.TimeStamp);
+                Assert.AreEqual(TestData.Purchases()[purchaseId - 1].ProductId, retResult.Id);
+                Assert.AreEqual(TestData.Purchases()[purchaseId - 1].ProductId, retResult.ProductId);
+                Assert.AreEqual(TestData.Purchases()[purchaseId - 1].Qty, retResult.Qty);
+                Assert.AreEqual(TestData.Purchases()[purchaseId - 1].AddressId, retResult.AddressId);
+                Assert.AreEqual(TestData.Purchases()[purchaseId - 1].AccountId, retResult.AccountId);
+                Assert.AreEqual(TestData.Purchases()[purchaseId - 1].OrderStatus, retResult.OrderStatus);
+                Assert.AreEqual(TestData.Purchases()[purchaseId - 1].TimeStamp, retResult.TimeStamp);
+            }
         }
 
         [TestMethod]
@@ -83,14 +84,16 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var repo = new FakePurchaseRepo(TestData.Purchases());
             var productRepo = new FakeProductService(TestData.Products());
-            var controller = new PurchasesController(repo, productRepo, null, null);
-            var purchaseId = 7000;
+            using (var controller = new PurchasesController(repo, productRepo, null, null))
+            {
+                var purchaseId = 7000;
 
-            //Act
-            var result = await controller.Details(purchaseId);
+                //Act
+                var result = await controller.Details(purchaseId);
 
-            // Assert
-            Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
+                // Assert
+                Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
+            }
         }
 
         [TestMethod]
@@ -99,14 +102,16 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var repo = new FakePurchaseRepo(TestData.Purchases());
             var productRepo = new FakeProductService(TestData.Products());
-            var controller = new PurchasesController(repo, productRepo, null, null);
-            var purchaseId = -6;
+            using (var controller = new PurchasesController(repo, productRepo, null, null))
+            {
+                var purchaseId = -6;
 
-            //Act
-            var result = await controller.Details(purchaseId);
+                //Act
+                var result = await controller.Details(purchaseId);
 
-            // Assert
-            Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
+                // Assert
+                Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
+            }
         }
 
         [TestMethod]
@@ -115,15 +120,17 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var repo = new FakePurchaseRepo(TestData.Purchases());
             var productRepo = new FakeProductService(TestData.Products());
-            var controller = new PurchasesController(repo, productRepo, null, null);
-            var purchaseId = 1;
+            using (var controller = new PurchasesController(repo, productRepo, null, null))
+            {
+                var purchaseId = 1;
 
-            // Act
-            var result = await controller.DeleteConfirmed(purchaseId);
+                // Act
+                await controller.DeleteConfirmed(purchaseId);
 
-            // Assert
-            var purchase = await controller.Details(purchaseId);
-            Assert.IsInstanceOfType(purchase.Result, typeof(NotFoundResult));
+                // Assert
+                var purchase = await controller.Details(purchaseId);
+                Assert.IsInstanceOfType(purchase.Result, typeof(NotFoundResult));
+            }
         }
 
         [TestMethod]
@@ -132,14 +139,16 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var repo = new FakePurchaseRepo(TestData.Purchases());
             var productRepo = new FakeProductService(TestData.Products());
-            var controller = new PurchasesController(repo, productRepo, null, null);
-            var purchaseId = -6;
+            using (var controller = new PurchasesController(repo, productRepo, null, null))
+            {
+                var purchaseId = -6;
 
-            // Act
-            var result = await controller.DeleteConfirmed(purchaseId);
+                // Act
+                var result = await controller.DeleteConfirmed(purchaseId);
 
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(BadRequestResult));
+                // Assert
+                Assert.IsInstanceOfType(result, typeof(BadRequestResult));
+            }
         }
 
         [TestMethod]
@@ -148,22 +157,24 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var repo = new FakePurchaseRepo(TestData.Purchases());
             var productRepo = new FakeProductService(TestData.Products());
-            var controller = new PurchasesController(repo, productRepo, null, null);
-            var accId = 1;
+            using (var controller = new PurchasesController(repo, productRepo, null, null))
+            {
+                var accId = 1;
 
-            // Act
-            var result = await controller.OrderHistory(accId);
+                // Act
+                var result = await controller.OrderHistory(accId);
 
-            // Assert
-            Assert.IsNotNull(result);
-            var objResult = result.Result as OkObjectResult;
-            Assert.IsNotNull(objResult);
-            var retResult = objResult.Value as List<Purchase>;
-            Assert.IsNotNull(retResult);
-            //foreach (Purchase purchase in retResult)
-            //{
-            //    Assert.AreEqual(await repo.GetPurchase(purchase.Id), purchase);
-            //}
+                // Assert
+                Assert.IsNotNull(result);
+                var objResult = result.Result as OkObjectResult;
+                Assert.IsNotNull(objResult);
+                var retResult = objResult.Value as List<Purchase>;
+                Assert.IsNotNull(retResult);
+                //foreach (Purchase purchase in retResult)
+                //{
+                //    Assert.AreEqual(await repo.GetPurchase(purchase.Id), purchase);
+                //}
+            }
         }
 
         [TestMethod]
@@ -172,14 +183,16 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var repo = new FakePurchaseRepo(TestData.Purchases());
             var productRepo = new FakeProductService(TestData.Products());
-            var controller = new PurchasesController(repo, productRepo, null, null);
-            var accId = 1000;
+            using (var controller = new PurchasesController(repo, productRepo, null, null))
+            {
+                var accId = 1000;
 
-            // Act
-            var result = await controller.OrderHistory(accId);
+                // Act
+                var result = await controller.OrderHistory(accId);
 
-            // Assert
-            Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
+                // Assert
+                Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
+            }
         }
 
         [TestMethod]
@@ -188,14 +201,16 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var repo = new FakePurchaseRepo(TestData.Purchases());
             var productRepo = new FakeProductService(TestData.Products());
-            var controller = new PurchasesController(repo, productRepo, null, null);
-            var accId = -6;
+            using (var controller = new PurchasesController(repo, productRepo, null, null))
+            {
+                var accId = -6;
 
-            // Act
-            var result = await controller.OrderHistory(accId);
+                // Act
+                var result = await controller.OrderHistory(accId);
 
-            // Assert
-            Assert.IsInstanceOfType(result.Result, typeof(BadRequestResult));
+                // Assert
+                Assert.IsInstanceOfType(result.Result, typeof(BadRequestResult));
+            }
         }
 
         [TestMethod]
@@ -204,15 +219,16 @@ namespace CustomerPurchases.Controllers.Tests
             // Arrange
             var repo = new FakePurchaseRepo(TestData.Purchases());
             var productRepo = new FakeProductService(TestData.Products());
-            var controller = new PurchasesController(repo, productRepo, null, null);
+            using (var controller = new PurchasesController(repo, productRepo, null, null))
+            {
+                // Act
+                var result = await controller.GetAll();
 
-            // Act
-            var result = await controller.GetAll();
-
-            // Assert
-            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
-            var objResult = result.Result as OkObjectResult;
-            Assert.IsNotNull(objResult);
+                // Assert
+                Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+                var objResult = result.Result as OkObjectResult;
+                Assert.IsNotNull(objResult);
+            }
         }
     }
 }
