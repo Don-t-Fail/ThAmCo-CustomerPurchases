@@ -213,17 +213,6 @@ namespace CustomerPurchases.Controllers.Tests
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             var objResult = result.Result as OkObjectResult;
             Assert.IsNotNull(objResult);
-
-            Assert.IsTrue(retResult.SequenceEqual(TestData.Purchases().Select(p => new PurchaseDetailsDto
-            {
-                AccountId = p.AccountId,
-                AddressId = p.AddressId,
-                Id = p.Id,
-                OrderStatus = p.OrderStatus,
-                ProductId = p.ProductId,
-                Qty = p.Qty,
-                TimeStamp = p.TimeStamp
-            }).ToList()));
         }
     }
 }
