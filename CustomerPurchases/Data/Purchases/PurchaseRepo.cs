@@ -23,7 +23,7 @@ namespace CustomerPurchases.Data
 
         public async Task<List<Purchase>> GetAll()
         {
-            return await _context.Purchase.ToListAsync();
+            return await _context.Purchase.Include(p => p.Product).ToListAsync();
         }
 
         public async Task<Purchase> GetPurchase(int id)
