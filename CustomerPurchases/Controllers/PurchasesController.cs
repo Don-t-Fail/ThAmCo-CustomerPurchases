@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using CustomerPurchases.Data;
+﻿using CustomerPurchases.Data;
 using CustomerPurchases.Data.Products;
+using CustomerPurchases.Data.Purchases;
 using CustomerPurchases.Models;
+using CustomerPurchases.Models.DTOs;
+using CustomerPurchases.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-using CustomerPurchases.Models.DTOs;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using CustomerPurchases.Data.Purchases;
-using CustomerPurchases.Models.ViewModels;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace CustomerPurchases.Controllers
 {
@@ -22,7 +22,7 @@ namespace CustomerPurchases.Controllers
         private readonly IProductService _productServ;
         private readonly IHttpClientFactory _clientFactory;
         private readonly IConfiguration _config;
-        
+
         public HttpClient HttpClient { get; set; }
 
         public PurchasesController(IPurchaseRepo repository, IProductService prodServ, IHttpClientFactory factory, IConfiguration config)
@@ -77,7 +77,7 @@ namespace CustomerPurchases.Controllers
                 var addresses = new List<AddressDto>()
                     {new AddressDto {Address = "500 Great Northern Highway", Id = 1}};
                 ViewData["AddressId"] = new SelectList(addresses, "Id", "Address");
-                
+
                 // TODO - Pre-Populate and make unalterable certain values, once proper routing and security is setup
 
                 return View();
@@ -86,7 +86,7 @@ namespace CustomerPurchases.Controllers
         }
 
         // POST: Purchases/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -96,7 +96,7 @@ namespace CustomerPurchases.Controllers
             {
                 var client = _clientFactory.CreateClient("RetryAndBreak");
                 client.BaseAddress = new System.Uri(_config["StockURL"]);
-                var resp = await client.GetAsync("stock/details/"+purchase.ProductId);
+                var resp = await client.GetAsync("stock/details/" + purchase.ProductId);
 
                 if (resp.IsSuccessStatusCode)
                 {
@@ -110,7 +110,7 @@ namespace CustomerPurchases.Controllers
                     purchase.OrderStatus = OrderStatus.Created;
 
                     var pProduct = await _productServ.GetProduct(purchase.ProductId);
-                    purchase.Product = new Product {Name = pProduct.Name};
+                    purchase.Product = new Product { Name = pProduct.Name };
                     _repository.InsertPurchase(purchase);
                     await _repository.Save();
                     return RedirectToAction(nameof(Index));
@@ -148,7 +148,7 @@ namespace CustomerPurchases.Controllers
         }
 
         // POST: Purchases/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -213,7 +213,7 @@ namespace CustomerPurchases.Controllers
             await _repository.Save();
             return RedirectToAction(nameof(Index));
         }
-        
+
         [HttpGet]
         public async Task<ActionResult<List<Purchase>>> OrderHistory(int id)
         {

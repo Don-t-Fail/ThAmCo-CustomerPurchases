@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace CustomerPurchases.Data.Purchases
+﻿namespace CustomerPurchases.Data.Purchases
 {
     public class OrderStatus
     {

@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using CustomerPurchases.Controllers;
+﻿using CustomerPurchases.Controllers;
 using CustomerPurchases.Data;
 using CustomerPurchases.Data.Products;
 using CustomerPurchases.Data.Purchases;
@@ -12,6 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Moq.Protected;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CustomerPurchasesTests.Controllers
 {
@@ -58,7 +58,7 @@ namespace CustomerPurchasesTests.Controllers
                 var purchaseId = 1;
 
                 // Act
-                var result = await controller.Details(purchaseId);            
+                var result = await controller.Details(purchaseId);
 
                 // Assert
                 Assert.IsNotNull(result);

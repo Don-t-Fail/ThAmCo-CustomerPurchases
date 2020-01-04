@@ -1,5 +1,5 @@
-﻿using CustomerPurchases.Models.DTOs;
-using Microsoft.EntityFrameworkCore;
+﻿using CustomerPurchases.Models;
+using CustomerPurchases.Models.DTOs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using CustomerPurchases.Models;
 
 namespace CustomerPurchases.Data.Products
 {
@@ -60,7 +59,7 @@ namespace CustomerPurchases.Data.Products
 
             _logger.LogInformation("Contacting Products Service");
 
-            var resp = await client.GetAsync("products/GetProduct/"+id);
+            var resp = await client.GetAsync("products/GetProduct/" + id);
 
             if (resp.IsSuccessStatusCode)
             {
