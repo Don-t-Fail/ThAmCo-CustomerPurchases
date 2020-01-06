@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CustomerPurchases.Controllers
 {
@@ -67,6 +68,7 @@ namespace CustomerPurchases.Controllers
         }
 
         // GET: Purchases/Create
+        [Authorize]
         public async Task<IActionResult> Create()
         {
             var products = await _productServ.GetAll();
@@ -90,6 +92,7 @@ namespace CustomerPurchases.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,ProductId,Qty,AddressId,AccountId,OrderStatus")] Purchase purchase)
         {
             if (ModelState.IsValid)
@@ -215,12 +218,14 @@ namespace CustomerPurchases.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<List<Purchase>>> OrderHistory(int id)
         {
             if (id < 0)
             {
                 return BadRequest();
             }
+
             var purchases = await _repository.GetPurchaseByAccount(id);
             if (purchases.Any())
             {
