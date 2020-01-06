@@ -49,6 +49,18 @@ namespace CustomerPurchases
                 .AddTransientHttpErrorPolicy(p =>
                     p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
+            services.AddAuthentication("Cookies")
+                .AddCookie("Cookies");
+
+            services.AddAuthorization
+            (
+                options => options.AddPolicy
+                (
+                    "StaffOnly",
+                    builder => { builder.RequireClaim("role", "Staff"); }
+                )
+            );
+
             services.AddScoped<IPurchaseRepo, PurchaseRepo>();
             services.AddScoped<IProductService, ProductService>();
         }
@@ -70,6 +82,8 @@ namespace CustomerPurchases
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
