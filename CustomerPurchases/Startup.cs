@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CustomerPurchases.Data;
+using CustomerPurchases.Data.Products;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
+using System;
 
 namespace CustomerPurchases
 {
@@ -31,8 +31,38 @@ namespace CustomerPurchases
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddDbContext<PurchaseDbContext>(options => options.UseSqlServer(
+                Configuration.GetConnectionString("PurchasesConnection"), optionsBuilder =>
+                {
+                    //Enable retry pattern on EF SQL
+                    optionsBuilder.EnableRetryOnFailure(3, TimeSpan.FromSeconds(10), null);
+                }
+            ));
+
+            //Polly Circuit Breaker HttpClient Config
+            services.AddHttpClient("RetryAndBreak")
+                .AddTransientHttpErrorPolicy(p => p
+                    .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))))
+                .AddTransientHttpErrorPolicy(p =>
+                    p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+
+            services.AddAuthentication("Cookies")
+                .AddCookie("Cookies");
+
+            services.AddAuthorization
+            (
+                options => options.AddPolicy
+                (
+                    "StaffOnly",
+                    builder => { builder.RequireClaim("role", "Staff"); }
+                )
+            );
+
+            services.AddScoped<IPurchaseRepo, PurchaseRepo>();
+            services.AddScoped<IProductService, ProductService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +82,8 @@ namespace CustomerPurchases
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
